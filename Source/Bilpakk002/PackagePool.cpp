@@ -3,6 +3,7 @@
 
 #include "PackagePool.h"
 #include "StackablePackage.h"
+#include "PackageSpawner.h"
 
 UPackagePool::UPackagePool()
 {
@@ -20,6 +21,7 @@ void UPackagePool::BeginPlay()
 		AStackablePackage* Package = GetWorld()->SpawnActor<AStackablePackage>(PackageClass, FVector(), FRotator());
 		Package->SetActorHiddenInGame(true);
 		Package->PackagePool = this;
+		Package->PackageSpawner = GetOwner<APackageSpawner>();
 		PackagePool.Add(Package);
 	}
 }

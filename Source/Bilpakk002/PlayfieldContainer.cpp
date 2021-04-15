@@ -11,7 +11,7 @@
 
 APlayfieldContainer::APlayfieldContainer()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	CarModel = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Car"));
 	SetRootComponent(CarModel);
@@ -24,9 +24,6 @@ APlayfieldContainer::APlayfieldContainer()
 void APlayfieldContainer::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	OnActorBeginOverlap.AddDynamic(this, &APlayfieldContainer::ActorBeginOverlap);
-	OnActorEndOverlap.AddDynamic(this, &APlayfieldContainer::ActorEndOverlap);
 
 	PreviewActor = GetWorld()->SpawnActor<AActor>();
 	PreviewMesh = NewObject<UStaticMeshComponent>(PreviewActor);
@@ -37,27 +34,10 @@ void APlayfieldContainer::BeginPlay()
 		PreviewMesh->SetVisibility(false);
 		PreviewActor->SetRootComponent(PreviewMesh);
 	}
-
-}
-void APlayfieldContainer::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-	if(bPanCylinder)
-	{
-		PanPlayfield();
-	}
-
-	if(ActivePackage)
-	{
-		UpdatePreview();
-	}
 }
 
-
-void APlayfieldContainer::PlacePackage()
+void APlayfieldContainer::PlacePackage(AStackablePackage* ActivePackage)
 {
-	if(!ActivePackage) return;
 	UStaticMeshComponent* NewPackage = StaticMeshPool->GetPooledActor();
 	if(!NewPackage) return;
 	NewPackage->AttachToComponent(CarModel, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
@@ -71,8 +51,21 @@ void APlayfieldContainer::PlacePackage()
 	UE_LOG(LogTemp, Warning, TEXT("Returned Points: %d"), ABilpakkGameState::GetPoints(GetWorld()));
 	PreviewMesh->SetVisibility(false);
 	//TODO Disable collision
-	ActivePackage->SetActorLocation(FVector::ZeroVector);
-	ActivePackage = nullptr;
+}
+
+void APlayfieldContainer::StartUpdatingPreview(UMaterialInstance* Material, UStaticMesh* Mesh)
+{
+	PreviewMesh->SetVisibility(true);
+	PreviewMesh->SetMaterial(0, Material);
+	PreviewMesh->SetStaticMesh(Mesh);
+	PreviewMesh->SetVisibility(true);
+	bUpdatePreview = true;
+}
+
+void APlayfieldContainer::StopUpdatingPreview()
+{
+	PreviewMesh->SetVisibility(false);
+	bUpdatePreview = false;
 }
 
 void APlayfieldContainer::InitializeEvents_Implementation(ABilpakkGameState* State)
@@ -103,67 +96,19 @@ void APlayfieldContainer::PanPlayfield()
 	CarModel->AddRelativeRotation(Delta);
 }
 
-void APlayfieldContainer::EndPanning_Implementation(AActor* Hand)
-{
-	if(Hand == PanHand)
-	{
-		bPanCylinder = false;
-		PanHand = nullptr;
-	}
-}
-
-bool APlayfieldContainer::StartPanning_Implementation(AActor* Hand)
-{
-	if(!bPanCylinder)
-	{
-		PanHand = Hand;
-		InitialHandLocation = PanHand->GetActorLocation();
-		bPanCylinder = true;
-		return true;
-	} 
-	return false;
-}
-
-void APlayfieldContainer::UpdatePreview()
+void APlayfieldContainer::UpdatePreview(AStackablePackage* ActivePackage)
 {
 	FTransform PreviewTransform;
 
 	
-	CalculatePackageBounds(PreviewRange);
+	CalculatePackageBounds(ActivePackage, PreviewRange);
 	if(Grid->FindSpaceForPackage(ActivePackage, PreviewRange, PreviewTransform))
 	{
 		PreviewActor->SetActorTransform(PreviewTransform);
 	}
 }
 
-
-
-void APlayfieldContainer::ActorBeginOverlap(AActor* OverlappedActor, AActor* OtherActor)
-{
-	UE_LOG(LogTemp, Warning, TEXT("begin overlap %s"), *OtherActor->GetName());
-	
-	if (AStackablePackage* Package = Cast<AStackablePackage>(OtherActor))
-	{
-		ActivePackage = Package;
-		ActivePackage->MeshComponent->SetMaterial(0, ActivePackage->HoloMaterial);
-		PreviewMesh->SetMaterial(0, ActivePackage->PackageParameters.Material);
-		PreviewMesh->SetStaticMesh(ActivePackage->MeshComponent->GetStaticMesh());
-		PreviewMesh->SetVisibility(true);
-	}
-}
-
-void APlayfieldContainer::ActorEndOverlap(AActor* OverlappedActor, AActor* OtherActor)
-{
-	UE_LOG(LogTemp, Warning, TEXT("end overlap %s"), *OtherActor->GetName());
-	
-	/*if(ActivePackage != nullptr && ActivePackage == OtherActor)
-	{
-		ActivePackage = nullptr;
-		PreviewMesh->SetVisibility(false);
-	}*/
-}
-
-void APlayfieldContainer::CalculatePackageBounds(FGridRange& OutRange)
+void APlayfieldContainer::CalculatePackageBounds(AStackablePackage* ActivePackage, FGridRange& OutRange)
 {
 	FTransform ActivePackageTransform = ActivePackage->GetTransform();
 	ActivePackageTransform.SetLocation( Grid->SnapLocationToGrid(ActivePackageTransform.GetLocation()));

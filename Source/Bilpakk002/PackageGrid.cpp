@@ -83,7 +83,6 @@ bool UPackageGrid::FindAvailableGridPosition(FIntVector StartGridLocation, FIntV
 		OutRange.Min.Z = z;
 		OutRange.Max.Z = z + pSize.Z;
 
-		UE_LOG(LogTemp, Warning, TEXT("Min: %s Max: %s"), *OutRange.Min.ToString(), *OutRange.Max.ToString());
 		if(!CheckRangeVacant(OutRange))
 		{
 			continue;

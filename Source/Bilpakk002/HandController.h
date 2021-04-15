@@ -23,6 +23,9 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	UPROPERTY()
+	bool bUpdatePreview = false;
+	
 	UPROPERTY(VisibleAnywhere)
 	USphereComponent* InteractionCollider;
 
@@ -30,35 +33,27 @@ private:
 	UWidgetComponent* MapWidget;
 	
 public:
+	virtual void Tick(float DeltaTime) override;
 	virtual void GripPressed() override;
 	virtual void GripReleased() override;
-	virtual void TriggerPressed() override;
-	virtual void TriggerReleased() override;
-	class AStackablePackage* FindClosestInteractableActor();
+	//virtual void TriggerPressed() override;
+	//virtual void TriggerReleased() override;
+	class AStackablePackage* FindClosestPackageWithinRange();
 	void SetMapEnabled(bool Enabled);
+
 
 	UFUNCTION(BlueprintCallable)
 	void SetupMap();
-	
 
 	UPROPERTY(BlueprintReadOnly)
 	AStackablePackage* ActivePackage;
-	
-	UPROPERTY(VisibleAnywhere)
-	TArray<AStackablePackage*> InteractableActors;
 
 	UPROPERTY(VisibleAnywhere)
-	class APlayfieldContainer* GrippablePlayfield;
-
-	UPROPERTY(VisibleAnywhere)
-	class APlayfieldContainer * PlayfieldInGrip;
-	
-	
+	class APlayfieldContainer* GrippablePlayfield;	
 
 	UFUNCTION()
     void ActorBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
+	
 	UFUNCTION()
     void ActorEndOverlap(AActor* OverlappedActor, AActor* OtherActor);
-
-
 };

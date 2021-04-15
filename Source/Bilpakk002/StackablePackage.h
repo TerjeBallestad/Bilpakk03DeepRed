@@ -110,7 +110,7 @@ public:
 	UPROPERTY()
 	UPackagePool* PackagePool;
 	
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FPackageParameters PackageParameters;
 
 	UPROPERTY(VisibleAnywhere)

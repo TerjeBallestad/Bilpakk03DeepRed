@@ -30,7 +30,6 @@ protected:
 	virtual void BeginPlay() override;
 	void PanPlayfield();
 
-	void UpdatePreview();
 
 	UPROPERTY(EditDefaultsOnly)
 	FTransform SpawnLocation;
@@ -66,15 +65,18 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UPackageGrid* Grid;
 
-	UPROPERTY()
-	class AStackablePackage* ActivePackage;
+	//UPROPERTY()
+	//class AStackablePackage* ActivePackage;
 
 	UPROPERTY(VisibleAnywhere)
 	UPointsCalculator* PointsCalculator;
 	
 public:	
-	virtual void Tick(float DeltaTime) override;
-	void PlacePackage();
+	//virtual void Tick(float DeltaTime) override;
+	void PlacePackage(AStackablePackage* ActivePackage);
+	void StartUpdatingPreview(UMaterialInstance* Material, UStaticMesh* Mesh);
+	void StopUpdatingPreview();
+	void UpdatePreview(AStackablePackage* ActivePackage);
 
 	UFUNCTION(BlueprintNativeEvent)
 	void InitializeEvents(class ABilpakkGameState *State);
@@ -88,19 +90,21 @@ public:
 	UPROPERTY(EditAnywhere)
 	FName LevelDataRowName;
 
-	UFUNCTION(BlueprintNativeEvent)
+	/*UFUNCTION(BlueprintNativeEvent)
 	bool StartPanning(AActor* Hand);
 
 	UFUNCTION(BlueprintNativeEvent)
-	void EndPanning(AActor* Hand);
+	void EndPanning(AActor* Hand);*/
 
-	UFUNCTION()
-	void ActorBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
+	//UFUNCTION()
+	//void ActorBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
 
+	/*
 	UFUNCTION()
     void ActorEndOverlap(AActor* OverlappedActor, AActor* OtherActor);
+    */
 
-	void CalculatePackageBounds(FGridRange& OutRange);
+	void CalculatePackageBounds(AStackablePackage* ActivePackage, FGridRange& OutRange);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void Finish();
