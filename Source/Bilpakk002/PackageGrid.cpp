@@ -57,8 +57,8 @@ bool UPackageGrid::FindSpaceForPackage(AStackablePackage* Package, FGridRange& O
 
 	// DrawDebugPoint(GetWorld(), GridToWorldLocation(IntMin), 20.0f, FColor(255,0,255,255), false, 0, 1);	
 	// DrawDebugPoint(GetWorld(), GridToWorldLocation(IntMax), 20.0f, FColor(0,255,255,255), false, 0, 1);	
-		
-	FIntVector Offset = CalculatePackageOffset(OutRange);
+
+	const FIntVector Offset = CalculatePackageOffset(OutRange);
 	OutRange.Min += Offset;
 	OutRange.Max += Offset;
 		
@@ -66,7 +66,7 @@ bool UPackageGrid::FindSpaceForPackage(AStackablePackage* Package, FGridRange& O
 
 	if (FindAvailableGridPosition(WorldToGridLocation(Package->GetActorLocation()) + Offset, FoundLocation,OutRange))
 	{
-		FVector PreviewLocation = GridToWorldLocation(FoundLocation);
+		const FVector PreviewLocation = GridToWorldLocation(FoundLocation);
 		Transform.SetLocation(PreviewLocation);
 		Transform.SetRotation(SnapRotationToGrid(Package->GetActorRotation()));
 		return true;
@@ -76,26 +76,22 @@ bool UPackageGrid::FindSpaceForPackage(AStackablePackage* Package, FGridRange& O
 
 bool UPackageGrid::FindAvailableGridPosition(FIntVector StartGridLocation, FIntVector& ResultPosition, FGridRange& OutRange)
 {
-	for (int z = StartGridLocation.Z - 1; z >= 0; --z)
+	const FIntVector pSize = OutRange.Max - OutRange.Min;
+	const int32 zSize = StartGridLocation.Z - OutRange.Min.Z;
+	for (int32 z = 0; z < Size.Z - pSize.Z + 1; ++z)
 	{
-		FIntVector Position = FIntVector(StartGridLocation.X, StartGridLocation.Y, z);
-		OutRange.Min.Z--;
-		OutRange.Max.Z--;
+		OutRange.Min.Z = z;
+		OutRange.Max.Z = z + pSize.Z;
 
+		UE_LOG(LogTemp, Warning, TEXT("Min: %s Max: %s"), *OutRange.Min.ToString(), *OutRange.Max.ToString());
 		if(!CheckRangeVacant(OutRange))
 		{
-			Position.Z++;
-			ResultPosition = Position;
-			OutRange.Min.Z++;
-			OutRange.Max.Z++;
-			return true;
+			continue;
 		}
-
-		if (z == 0)
-		{
-			ResultPosition = Position;
-			return true;
-		}
+		
+		ResultPosition = StartGridLocation;
+		ResultPosition.Z = OutRange.Min.Z + zSize;
+		return true;
 	}
 	return false;
 }
@@ -206,7 +202,7 @@ bool UPackageGrid::CheckRangeVacant(FGridRange Range)
 		{
 			for (int Z = Range.Min.Z; Z < Range.Max.Z; ++Z)
 			{
-				FIntVector GridLocation = FIntVector(X, Y, Z);
+				FIntVector GridLocation(X,Y,Z);
 				FVector PreviewLocation = GridToWorldLocation(GridLocation);
 				if(!Grid.Contains(GridLocation))
 				{
