@@ -42,7 +42,11 @@ protected:
 public:	
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
 	virtual void SetActorHiddenInGame(bool bNewHidden) override;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnSetHidden();
 
 	UPROPERTY(BlueprintReadOnly)
 	UCameraComponent* VRCamera;
@@ -55,6 +59,12 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent)
 	void InitializeEvents(class ABilpakkGameState *State);
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	AHandControllerBase* RightHandController;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	AHandControllerBase* LeftHandController;
 	
 private:
 
@@ -76,12 +86,6 @@ private:
 	
 	UPROPERTY()
 	bool bSetup = false;
-	
-	UPROPERTY(VisibleAnywhere)
-	AHandControllerBase* RightHandController;
-
-	UPROPERTY(VisibleAnywhere)
-	AHandControllerBase* LeftHandController;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AHandControllerBase> HandControllerClass;

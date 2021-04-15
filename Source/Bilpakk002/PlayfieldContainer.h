@@ -44,7 +44,7 @@ protected:
 	UPROPERTY()
 	FGridRange PreviewRange;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	UStaticMeshComponent* PreviewMesh;
 
 	UPROPERTY(BlueprintReadWrite)

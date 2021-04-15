@@ -44,7 +44,7 @@ void UActorPool::InitializeNewPooledActor()
 	ActorPool.Add(NewComponent);
 }
 
-void UActorPool::ReturnPooledActors()
+void UActorPool::ClearStackedPackages()
 {
 	for (auto Actor : ActiveActors)
 	{

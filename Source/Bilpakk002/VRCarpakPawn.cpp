@@ -91,6 +91,9 @@ void AVRCarpakPawn::SetActorHiddenInGame(bool bNewHidden)
 	if(!LeftHandController) Setup();
 	LeftHandController->SetActorHiddenInGame(bNewHidden);
 	RightHandController->SetActorHiddenInGame(bNewHidden);
+
+	if(bNewHidden == true)
+		OnSetHidden();
 }
 
 void AVRCarpakPawn::PauseGame_Implementation()

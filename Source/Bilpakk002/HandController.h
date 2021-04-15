@@ -41,7 +41,7 @@ public:
 	void SetupMap();
 	
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	AStackablePackage* ActivePackage;
 	
 	UPROPERTY(VisibleAnywhere)

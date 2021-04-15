@@ -104,6 +104,7 @@ class BILPAKK002_API AStackablePackage : public AActor
 public:	
 	AStackablePackage();
 
+	UFUNCTION(BlueprintCallable)
 	void ReturnToPackagePool();
 
 	UPROPERTY()

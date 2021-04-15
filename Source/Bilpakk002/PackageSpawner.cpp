@@ -64,8 +64,12 @@ AStackablePackage* APackageSpawner::GetNextPackage()
 	AStackablePackage* Package = PackagePool->GetPackage();
 	Package->Setup(SpawnQueue[0]);
 	Package->MeshComponent->SetMaterial(0, SpawnQueue[0].Material);
-	SpawnQueue.RemoveAt(0);
 	return Package;
+}
+
+void APackageSpawner::RemoveFirstPackageFromQueue()
+{
+	SpawnQueue.RemoveAt(0);
 }
 
 void APackageSpawner::InitializeEvents_Implementation(ABilpakkGameState* State)

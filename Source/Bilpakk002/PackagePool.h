@@ -28,12 +28,18 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	class AStackablePackage* GetPackage();
+
+	UFUNCTION(BlueprintCallable)
+	void ReturnAllPackages();
 	
 	void ReturnPackage(AStackablePackage* Package);
 
 private:
 	UPROPERTY()
-	TArray<class AStackablePackage*> Packages;
+	TArray<class AStackablePackage*> PackagePool;
+
+	UPROPERTY()
+	TArray<class AStackablePackage*> ActivePackages;
 
 	UPROPERTY(EditAnywhere)
 	int PoolSize =4;

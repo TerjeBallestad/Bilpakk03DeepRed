@@ -25,7 +25,7 @@ public:
 	void InitializeNewPooledActor();
 
 	UFUNCTION(BlueprintCallable)
-	void ReturnPooledActors();
+	void ClearStackedPackages();
 
 private:
 	UPROPERTY(VisibleAnywhere)

@@ -61,11 +61,13 @@ void AHandController::TriggerReleased()
 
 	if(GrippablePlayfield)
 	{
+	UE_LOG(LogTemp, Warning, TEXT("Trigger released in playfield"));
 		GrippablePlayfield->PlacePackage();
 		ActivePackage->StopInteract();
 		ActivePackage = nullptr;
 	} else
 	{
+	UE_LOG(LogTemp, Warning, TEXT("Trigger released outside playfield"));
 		//TODO
 		//InteractingActor->PackageSpawner->SpawnQueue.Add(InteractingActor->PackageParameters);
 		ActivePackage->StopInteract();

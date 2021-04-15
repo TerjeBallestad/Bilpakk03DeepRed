@@ -61,6 +61,9 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	TArray<FPackageParameters> SpawnQueue;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPackagePool* PackagePool;
+	
 	UFUNCTION(BlueprintImplementableEvent)
 	void Finish();
 
@@ -82,9 +85,10 @@ private:
 	UFUNCTION(BlueprintCallable)
 	class AStackablePackage* GetNextPackage();
 
+	UFUNCTION(BlueprintCallable)
+	void RemoveFirstPackageFromQueue();
+
 	// Components
-	UPROPERTY(VisibleAnywhere)
-	UPackagePool* PackagePool;
 	
 	UPROPERTY(VisibleAnywhere)
 	TMap<EPackageType, UMaterialInstance*> Materials;
