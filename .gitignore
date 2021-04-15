@@ -40,6 +40,7 @@
 *.sdf
 *.VC.db
 *.VC.opendb
+.idea/
 
 # Precompiled Assets
 SourceArt/**/*.png
@@ -72,3 +73,13 @@ Plugins/*/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+
+# Heavy working files
+_GENERATED
+untitled_Category
+MobileStarterContent
+/Bilpakk.sln.DotSettings.user
+*/VirtualReality
+*/VirtualRealityBP
+*/untitled_Category
+Content/Geometry
