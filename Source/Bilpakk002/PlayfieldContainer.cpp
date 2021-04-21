@@ -36,10 +36,11 @@ void APlayfieldContainer::BeginPlay()
 	}
 }
 
-void APlayfieldContainer::PlacePackage(AStackablePackage* ActivePackage)
+bool APlayfieldContainer::PlacePackage(AStackablePackage* ActivePackage)
 {
 	UStaticMeshComponent* NewPackage = StaticMeshPool->GetPooledActor();
-	if(!NewPackage) return;
+	if(!NewPackage || !PreviewMesh->IsVisible()) return false;
+	
 	NewPackage->AttachToComponent(CarModel, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 	NewPackage->SetStaticMesh(PreviewMesh->GetStaticMesh());
 	NewPackage->SetMaterial(0,ActivePackage->PackageParameters.Material);
@@ -50,6 +51,7 @@ void APlayfieldContainer::PlacePackage(AStackablePackage* ActivePackage)
 	OnPointsAdded.Broadcast();
 	UE_LOG(LogTemp, Warning, TEXT("Returned Points: %d"), ABilpakkGameState::GetPoints(GetWorld()));
 	PreviewMesh->SetVisibility(false);
+	return true;
 	//TODO Disable collision
 }
 
@@ -96,7 +98,7 @@ void APlayfieldContainer::PanPlayfield()
 	CarModel->AddRelativeRotation(Delta);
 }
 
-void APlayfieldContainer::UpdatePreview(AStackablePackage* ActivePackage)
+bool APlayfieldContainer::UpdatePreview(AStackablePackage* ActivePackage)
 {
 	FTransform PreviewTransform;
 
@@ -105,6 +107,12 @@ void APlayfieldContainer::UpdatePreview(AStackablePackage* ActivePackage)
 	if(Grid->FindSpaceForPackage(ActivePackage, PreviewRange, PreviewTransform))
 	{
 		PreviewActor->SetActorTransform(PreviewTransform);
+		PreviewMesh->SetVisibility(true);
+		return true;
+	} else
+	{
+		PreviewMesh->SetVisibility(false);
+		return false;
 	}
 }
 

@@ -73,10 +73,10 @@ protected:
 	
 public:	
 	//virtual void Tick(float DeltaTime) override;
-	void PlacePackage(AStackablePackage* ActivePackage);
+	bool PlacePackage(AStackablePackage* ActivePackage);
 	void StartUpdatingPreview(UMaterialInstance* Material, UStaticMesh* Mesh);
 	void StopUpdatingPreview();
-	void UpdatePreview(AStackablePackage* ActivePackage);
+	bool UpdatePreview(AStackablePackage* ActivePackage);
 
 	UFUNCTION(BlueprintNativeEvent)
 	void InitializeEvents(class ABilpakkGameState *State);

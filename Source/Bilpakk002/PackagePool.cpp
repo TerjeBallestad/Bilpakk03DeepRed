@@ -42,7 +42,8 @@ AStackablePackage* UPackagePool::GetPackage()
 
 void UPackagePool::ReturnAllPackages()
 {
-	for (auto Package : ActivePackages)
+	TArray<AStackablePackage*> TempArray = ActivePackages;
+	for (auto Package : TempArray)
 	{
 		ReturnPackage(Package);
 	}

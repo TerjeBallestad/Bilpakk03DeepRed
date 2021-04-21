@@ -5,7 +5,7 @@
 
 AHandControllerBase::AHandControllerBase()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	MotionControllerComponent = CreateDefaultSubobject<UMotionControllerComponent> (TEXT("MotionController"));
 	SetRootComponent(MotionControllerComponent);

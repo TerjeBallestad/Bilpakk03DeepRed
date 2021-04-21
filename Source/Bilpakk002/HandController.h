@@ -10,6 +10,13 @@
 #include "Components/WidgetComponent.h"
 #include "HandController.generated.h"
 
+UENUM(BlueprintType)
+enum class EGripState : uint8
+{
+	Open,
+	CanGrab,
+	Grab,
+};
 
 UCLASS()
 class BILPAKK002_API AHandController : public AHandControllerBase
@@ -41,12 +48,20 @@ public:
 	class AStackablePackage* FindClosestPackageWithinRange();
 	void SetMapEnabled(bool Enabled);
 
+	UPROPERTY(BlueprintReadOnly)
+	bool bWantsToGrip = false;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	EGripState GripState = EGripState::Open;
 
 	UFUNCTION(BlueprintCallable)
 	void SetupMap();
 
 	UPROPERTY(BlueprintReadOnly)
-	AStackablePackage* ActivePackage;
+	AStackablePackage*  PackageInGrip;
+
+	UPROPERTY(VisibleAnywhere)
+	TArray<AStackablePackage*> GrippablePackages;
 
 	UPROPERTY(VisibleAnywhere)
 	class APlayfieldContainer* GrippablePlayfield;	

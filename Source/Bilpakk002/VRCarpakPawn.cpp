@@ -92,6 +92,16 @@ void AVRCarpakPawn::SetActorHiddenInGame(bool bNewHidden)
 	LeftHandController->SetActorHiddenInGame(bNewHidden);
 	RightHandController->SetActorHiddenInGame(bNewHidden);
 
+	if(AHandController* HandController = Cast<AHandController>(LeftHandController))
+	{
+		HandController->GripState = EGripState::Open;
+	}
+
+	if(AHandController* HandController = Cast<AHandController>(RightHandController))
+	{
+		HandController->GripState = EGripState::Open;
+	}
+
 	if(bNewHidden == true)
 		OnSetHidden();
 }

@@ -122,6 +122,9 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	UMaterial *HoloMaterial;
 
+	UPROPERTY(EditDefaultsOnly)
+	UMaterial *RedHoloMaterial;
+
 	UPROPERTY(BlueprintReadWrite)
 	class APackageSpawner* PackageSpawner;
 

@@ -32,38 +32,46 @@ void AHandController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if(ActivePackage && GrippablePlayfield)
+	if(PackageInGrip && GrippablePlayfield)
 	{
-		GrippablePlayfield->UpdatePreview(ActivePackage);
+		if(GrippablePlayfield->UpdatePreview(PackageInGrip))
+		{
+			PackageInGrip->MeshComponent->SetMaterial(0,PackageInGrip->HoloMaterial);
+		}else
+		{
+			PackageInGrip->MeshComponent->SetMaterial(0,PackageInGrip->RedHoloMaterial);
+		}
 	}
 }
 
 void AHandController::GripPressed()
 {
-	ActivePackage = FindClosestPackageWithinRange();
-	if(!ActivePackage) return;
-	UE_LOG(LogTemp, Warning, TEXT("Triggering %s"), *ActivePackage->GetName());
-	ActivePackage->StartInteract(this);
+	GripState = EGripState::Grab;
+	PackageInGrip = FindClosestPackageWithinRange();
+	if(!PackageInGrip) return;
+	UE_LOG(LogTemp, Warning, TEXT("Triggering %s"), *PackageInGrip->GetName());
+	PackageInGrip->StartInteract(this);
 }
 
 void AHandController::GripReleased()
 {
-	if(!ActivePackage) return;
+	GripState = EGripState::Open;
+	
+	if(!PackageInGrip) return;
 
 	if(GrippablePlayfield)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Trigger released in playfield"));
-		GrippablePlayfield->PlacePackage(ActivePackage);
-		ActivePackage->StopInteract();
-		ActivePackage = nullptr;
+		if(!GrippablePlayfield->PlacePackage(PackageInGrip))
+		{
+			PackageInGrip->PackageSpawner->SpawnQueue.Insert(PackageInGrip->PackageParameters, 0);
+		}
 	} else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Trigger released outside playfield"));
-		//TODO
-		ActivePackage->PackageSpawner->SpawnQueue.Insert(ActivePackage->PackageParameters, 0);
-		ActivePackage->StopInteract();
-		ActivePackage = nullptr;
+		PackageInGrip->PackageSpawner->SpawnQueue.Insert(PackageInGrip->PackageParameters, 0);
 	}
+	
+	PackageInGrip->StopInteract();
+	PackageInGrip = nullptr;
 }
 
 AStackablePackage* AHandController::FindClosestPackageWithinRange()
@@ -101,20 +109,37 @@ void AHandController::SetupMap()
 
 void AHandController::ActorBeginOverlap(AActor* OverlappedActor, AActor* OtherActor)
 {
+	if(AStackablePackage* Package = Cast<AStackablePackage>(OtherActor))
+	{
+		if(!GrippablePackages.Contains(Package))
+		{
+			GripState = EGripState::CanGrab;
+			GrippablePackages.Add(Package);
+			//if(PackageInGrip == nullptr)
+		}
+	}
 	if(APlayfieldContainer* PlayfieldContainer = Cast<APlayfieldContainer>(OtherActor))
 	{
 		GrippablePlayfield = PlayfieldContainer;
-		if(ActivePackage)
+		if(PackageInGrip)
 		{
-			GrippablePlayfield->StartUpdatingPreview(ActivePackage->PackageParameters.Material, ActivePackage->MeshComponent->GetStaticMesh());
-			ActivePackage->MeshComponent->SetMaterial(0, ActivePackage->HoloMaterial);
-			
+			GrippablePlayfield->StartUpdatingPreview(PackageInGrip->PackageParameters.Material, PackageInGrip->MeshComponent->GetStaticMesh());
 		}
 	}
 }
 
 void AHandController::ActorEndOverlap(AActor* OverlappedActor, AActor* OtherActor)
 {
+	if(!GrippablePackages.Contains(OtherActor))
+	{
+		GrippablePackages.Remove(Cast<AStackablePackage>(OtherActor));
+
+		if(GrippablePackages.Num() < 1 && PackageInGrip == nullptr)
+		{
+			GripState = EGripState::Open;
+		}
+	}
+	
 	if (OtherActor == GrippablePlayfield)
 	{
 		GrippablePlayfield->StopUpdatingPreview();
