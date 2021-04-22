@@ -8,6 +8,7 @@
 #include "BilpakkSave.h"
 #include "PlayfieldContainer.h"
 #include "VRCarpakPawn.h"
+#include "AndroidPermissionFunctionLibrary.h"
 
 void ABilpakkGameState::TogglePause()
 {
@@ -34,8 +35,9 @@ void ABilpakkGameState::TogglePause()
 
 void ABilpakkGameState::FinishGame()
 {
+	//UAndroidPermissionFunctionLibrary::AcquirePermissions(MyPermissionArray);
 	UBilpakkSave* Save = UBilpakkSave::Load();
-	Save->AddHighscore(GetPoints(GetWorld()), RowName);
+	Save->AddHighscore(ABilpakkGameState::GetPoints(GetWorld()), RowName);
 	Save->Save();
 	UIPawn->SetActorTransform(StackingPawn->GetActorTransform());
 	UIPawn->SetActorHiddenInGame(false);
