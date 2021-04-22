@@ -32,7 +32,7 @@ private:
 	TArray<UStaticMeshComponent*> ActorPool;
 
 	UPROPERTY(VisibleAnywhere)
-	TArray<UStaticMeshComponent*> ActiveActors;
+	TArray<UStaticMeshComponent*> ActivePackages;
 
 	UPROPERTY(EditAnywhere)
 	int PreWarmed = 4;

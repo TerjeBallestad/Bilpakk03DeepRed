@@ -57,7 +57,8 @@ AStackablePackage* APackageSpawner::GetNextPackage()
 {
 	if(SpawnQueue.Num() < 1)
 	{
-		GameState->FinishGame();
+		FTimerHandle Handle;
+		GetWorldTimerManager().SetTimer(Handle, GameState, &ABilpakkGameState::FinishGame, 2, false);
 		return nullptr;
 	}
 	
@@ -69,7 +70,10 @@ AStackablePackage* APackageSpawner::GetNextPackage()
 
 void APackageSpawner::RemoveFirstPackageFromQueue()
 {
-	SpawnQueue.RemoveAt(0);
+	if(SpawnQueue.Num() > 0)
+	{
+		SpawnQueue.RemoveAt(0);
+	}
 }
 
 void APackageSpawner::InitializeEvents_Implementation(ABilpakkGameState* State)

@@ -80,7 +80,9 @@ private:
 	
 	UPROPERTY(EditDefaultsOnly)
 	FTransform SpawnLocation;
-	
+
+	UPROPERTY(EditDefaultsOnly)
+	FTransform PackageSpawnLocation;
 	
 	UFUNCTION(BlueprintCallable)
 	class AStackablePackage* GetNextPackage();

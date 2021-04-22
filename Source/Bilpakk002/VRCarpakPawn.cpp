@@ -6,7 +6,6 @@
 
 #include "BilpakkGameState.h"
 #include "Kismet/GameplayStatics.h"
-#include "Kismet/KismetMathLibrary.h"
 
 AVRCarpakPawn::AVRCarpakPawn()
 {

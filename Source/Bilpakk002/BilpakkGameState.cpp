@@ -35,7 +35,7 @@ void ABilpakkGameState::TogglePause()
 void ABilpakkGameState::FinishGame()
 {
 	UBilpakkSave* Save = UBilpakkSave::Load();
-	Save->AddHighscore(ABilpakkGameState::GetPoints(GetWorld()), RowName);
+	Save->AddHighscore(GetPoints(GetWorld()), RowName);
 	Save->Save();
 	UIPawn->SetActorTransform(StackingPawn->GetActorTransform());
 	UIPawn->SetActorHiddenInGame(false);

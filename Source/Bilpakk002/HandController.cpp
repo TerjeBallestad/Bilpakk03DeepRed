@@ -144,6 +144,11 @@ void AHandController::ActorEndOverlap(AActor* OverlappedActor, AActor* OtherActo
 	{
 		GrippablePlayfield->StopUpdatingPreview();
 		GrippablePlayfield = nullptr;
+
+		if(PackageInGrip)
+		{
+			PackageInGrip->MeshComponent->SetMaterial(0, PackageInGrip->PackageParameters.Material);
+		}
 	}
 }
 

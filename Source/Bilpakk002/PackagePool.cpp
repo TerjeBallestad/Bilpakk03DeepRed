@@ -20,8 +20,10 @@ void UPackagePool::BeginPlay()
 	{
 		AStackablePackage* Package = GetWorld()->SpawnActor<AStackablePackage>(PackageClass, FVector(), FRotator());
 		Package->SetActorHiddenInGame(true);
+		Package->SetActorEnableCollision(false);
 		Package->PackagePool = this;
 		Package->PackageSpawner = GetOwner<APackageSpawner>();
+		Package->SetActorLocation(GetOwner()->GetActorLocation());
 		PackagePool.Add(Package);
 	}
 }
@@ -36,6 +38,7 @@ AStackablePackage* UPackagePool::GetPackage()
 	ActivePackages.Add(Package);
 	Package->bActive = true;
 	Package->SetActorHiddenInGame(false);
+	Package->SetActorEnableCollision(true);
 
 	return Package;
 }
@@ -52,6 +55,7 @@ void UPackagePool::ReturnAllPackages()
 void UPackagePool::ReturnPackage(AStackablePackage* Package)
 {
 	Package->SetActorHiddenInGame(true);
+	Package->SetActorEnableCollision(false);
 	ActivePackages.Remove(Package);
 	PackagePool.Add(Package);
 }

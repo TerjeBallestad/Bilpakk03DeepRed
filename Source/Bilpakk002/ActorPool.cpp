@@ -30,7 +30,7 @@ UStaticMeshComponent* UActorPool::GetPooledActor()
 	if(!NewActor) return nullptr;
 	NewActor->SetVisibility(true);
 	NewActor->Activate();
-	ActiveActors.Add(NewActor);
+	ActivePackages.Add(NewActor);
 	
 	return NewActor;
 }
@@ -46,14 +46,14 @@ void UActorPool::InitializeNewPooledActor()
 
 void UActorPool::ClearStackedPackages()
 {
-	for (auto Actor : ActiveActors)
+	for (auto Mesh : ActivePackages)
 	{
-		Actor->SetVisibility(false);
-		Actor->Deactivate();
-		Actor->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
-		ActorPool.Add(Actor);
+		Mesh->SetVisibility(false);
+		Mesh->Deactivate();
+		Mesh->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+		ActorPool.Add(Mesh);
 	}
-	ActiveActors.Empty();
+	ActivePackages.Empty();
 }
 
 
