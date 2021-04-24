@@ -98,15 +98,13 @@ void APlayfieldContainer::PanPlayfield()
 	CarModel->AddRelativeRotation(Delta);
 }
 
-bool APlayfieldContainer::UpdatePreview(AStackablePackage* ActivePackage)
+bool APlayfieldContainer::UpdatePreview(AStackablePackage* ActivePackage, FTransform &InOutPreviewTransform)
 {
-	FTransform PreviewTransform;
-
 	
 	CalculatePackageBounds(ActivePackage, PreviewRange);
-	if(Grid->FindSpaceForPackage(ActivePackage, PreviewRange, PreviewTransform))
+	if(Grid->FindSpaceForPackage(ActivePackage, PreviewRange, InOutPreviewTransform))
 	{
-		PreviewActor->SetActorTransform(PreviewTransform);
+		PreviewActor->SetActorTransform(InOutPreviewTransform);
 		PreviewMesh->SetVisibility(true);
 		return true;
 	} else

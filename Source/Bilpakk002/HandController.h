@@ -8,6 +8,8 @@
 #include "HandControllerBase.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Sound/SoundCue.h"
+
 #include "HandController.generated.h"
 
 UENUM(BlueprintType)
@@ -38,6 +40,21 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	UWidgetComponent* MapWidget;
+
+	UPROPERTY(EditDefaultsOnly)
+	USoundCue* GridTick;
+
+	UPROPERTY(EditDefaultsOnly)
+	USoundCue* PackagePlacement;
+
+	UPROPERTY(EditDefaultsOnly)
+	USoundCue* FinalPackagePlacement;
+
+	UPROPERTY(EditDefaultsOnly)
+	USoundCue* GridTickError;
+
+	UPROPERTY()
+	FTransform PreviousPreviewTransform;
 	
 public:
 	virtual void Tick(float DeltaTime) override;

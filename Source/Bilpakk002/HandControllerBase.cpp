@@ -3,6 +3,8 @@
 
 #include "HandControllerBase.h"
 
+#include "Components/AudioComponent.h"
+
 AHandControllerBase::AHandControllerBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -10,5 +12,9 @@ AHandControllerBase::AHandControllerBase()
 	MotionControllerComponent = CreateDefaultSubobject<UMotionControllerComponent> (TEXT("MotionController"));
 	SetRootComponent(MotionControllerComponent);
 	MotionControllerComponent->SetShowDeviceModel(true);
+
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
+	AudioComponent->SetupAttachment(MotionControllerComponent);
+	
 }
 

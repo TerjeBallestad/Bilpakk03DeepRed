@@ -57,6 +57,11 @@ public:
 	UFUNCTION(BlueprintPure, meta = (WorldContext = "WorldContextObject"))
 	static FBilpakkLevel GetLevelData(UObject* WorldContextObject);
 
+	UPROPERTY(EditDefaultsOnly)
+	USoundCue* Music;
+
+	UPROPERTY()
+	UAudioComponent* AudioComponent;
 	
 	UPROPERTY(EditAnywhere)
 	UDataTable* LevelDataTable;

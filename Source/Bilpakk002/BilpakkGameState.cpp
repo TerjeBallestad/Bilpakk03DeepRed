@@ -9,6 +9,7 @@
 #include "PlayfieldContainer.h"
 #include "VRCarpakPawn.h"
 #include "AndroidPermissionFunctionLibrary.h"
+#include "Components/AudioComponent.h"
 
 void ABilpakkGameState::TogglePause()
 {
@@ -44,12 +45,14 @@ void ABilpakkGameState::FinishGame()
 	StackingPawn->SetActorHiddenInGame(true);
 	IsFinished = true;
 	PC->Possess(UIPawn);
+	AudioComponent->Stop();
 	OnFinishedGame.Broadcast();
 }
 
 void ABilpakkGameState::StartGame(FName Row)
 {
-	
+	if(AudioComponent && !AudioComponent->IsPlaying())
+		AudioComponent->Play();
 	Points = 0;
 	BonusPoints = 0;
 	if(Row == "")
@@ -115,7 +118,13 @@ void ABilpakkGameState::AddBonusPoints(int32 Amount)
 void ABilpakkGameState::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	TogglePause();
+
+	AActor* MusicActor = GetWorld()->SpawnActor<AActor>();
+	AudioComponent = NewObject<UAudioComponent>(MusicActor);
+	AudioComponent->RegisterComponent();
+	AudioComponent->SetSound(Music);
 }
 
 int32 ABilpakkGameState::GetPoints(UObject* WorldContextObject) 

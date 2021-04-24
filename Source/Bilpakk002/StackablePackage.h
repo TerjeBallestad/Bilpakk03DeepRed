@@ -117,6 +117,9 @@ public:
 	UStaticMeshComponent* MeshComponent;
 
 	UPROPERTY()
+	bool bIsGripped = false;
+
+	UPROPERTY()
 	bool bActive = false;
 
 	UPROPERTY(EditDefaultsOnly)

@@ -36,8 +36,11 @@ void AStackablePackage::Setup(FPackageParameters NewPackage)
 
 void AStackablePackage::StartInteract(AHandController* HandController)
 {
+	if(bIsGripped) return;
+	
 	AttachToActor(HandController, FAttachmentTransformRules::KeepWorldTransform);
-	UE_LOG(LogTemp, Warning, TEXT("Being gripped by %s"), *HandController->GetName());
+	bIsGripped = true;
+	UE_LOG(LogTemp, Warning, TEXT("Being gripped by %s %s"), *HandController->GetName(), bIsGripped ? TEXT("Is Gripped") : TEXT("Not Gripped"));
 	
 }
 
@@ -47,8 +50,9 @@ void AStackablePackage::StopInteract()
 	if(PackagePool)
 	{
 		PackagePool->OnPackageInteracted.Broadcast();
+		ReturnToPackagePool();
 	}
-	ReturnToPackagePool();
+	bIsGripped = false;
 }
 
 

@@ -23,4 +23,7 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UMotionControllerComponent* MotionControllerComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UAudioComponent* AudioComponent;
 };

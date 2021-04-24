@@ -76,7 +76,7 @@ public:
 	bool PlacePackage(AStackablePackage* ActivePackage);
 	void StartUpdatingPreview(UMaterialInstance* Material, UStaticMesh* Mesh);
 	void StopUpdatingPreview();
-	bool UpdatePreview(AStackablePackage* ActivePackage);
+	bool UpdatePreview(AStackablePackage* ActivePackage, FTransform& InOutPreviewTransform);
 
 	UFUNCTION(BlueprintNativeEvent)
 	void InitializeEvents(class ABilpakkGameState *State);

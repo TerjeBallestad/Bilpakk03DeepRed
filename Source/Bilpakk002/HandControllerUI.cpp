@@ -2,6 +2,8 @@
 
 
 #include "HandControllerUI.h"
+#include "PackageSpawner.h"
+#include "Components/AudioComponent.h"
 
 AHandControllerUI::AHandControllerUI()
 {
@@ -17,5 +19,5 @@ void AHandControllerUI::TriggerPressed()
 
 void AHandControllerUI::TriggerReleased()
 {
-	Pointer->ReleasePointerKey(EKeys::LeftMouseButton);
+	Pointer->ReleasePointerKey(EKeys::LeftMouseButton); 
 }

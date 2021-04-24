@@ -23,5 +23,5 @@ public:
 	virtual void TriggerReleased() override;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	UWidgetInteractionComponent* Pointer;	
+	UWidgetInteractionComponent* Pointer;
 };

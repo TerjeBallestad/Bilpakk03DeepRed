@@ -58,8 +58,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void Setup(FBilpakkLevel Data);
 	
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TArray<FPackageParameters> SpawnQueue;
+
+	UFUNCTION(BlueprintPure, meta = (WorldContext = "WorldContextObject"))
+	static int32 GetRemainingPackageAmount(UObject* WorldContextObject);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UPackagePool* PackagePool;

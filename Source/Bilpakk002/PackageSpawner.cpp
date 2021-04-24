@@ -53,6 +53,18 @@ void APackageSpawner::Setup(FBilpakkLevel Data)
 	ShuffleArray(SpawnQueue);
 }
 
+int32 APackageSpawner::GetRemainingPackageAmount(UObject* WorldContextObject)
+{
+	if((!GEngine) && (!WorldContextObject)) return -1;
+
+	ABilpakkGameState* State = Cast<ABilpakkGameState>(GEngine->
+		GetWorldFromContextObjectChecked(WorldContextObject)->GetAuthGameMode()->GameState);
+	if(State)
+		return State->PackageSpawner->SpawnQueue.Num();
+	else
+		return -1;
+}
+
 AStackablePackage* APackageSpawner::GetNextPackage()
 {
 	if(SpawnQueue.Num() < 1)

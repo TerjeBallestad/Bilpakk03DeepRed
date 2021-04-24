@@ -6,6 +6,7 @@
 
 #include "PlayfieldContainer.h"
 #include "RouteMap.h"
+#include "Components/AudioComponent.h"
 
 AHandController::AHandController()
 {
@@ -34,13 +35,25 @@ void AHandController::Tick(float DeltaTime)
 
 	if(PackageInGrip && GrippablePlayfield)
 	{
-		if(GrippablePlayfield->UpdatePreview(PackageInGrip))
+		FTransform CurrentPreviewTransform;
+		if(GrippablePlayfield->UpdatePreview(PackageInGrip, CurrentPreviewTransform))
 		{
 			PackageInGrip->MeshComponent->SetMaterial(0,PackageInGrip->HoloMaterial);
+			if(!CurrentPreviewTransform.Equals(PreviousPreviewTransform))
+			{
+				AudioComponent->SetSound(GridTick);
+				AudioComponent->Play();
+			}
 		}else
 		{
 			PackageInGrip->MeshComponent->SetMaterial(0,PackageInGrip->RedHoloMaterial);
+			if(!CurrentPreviewTransform.Equals(PreviousPreviewTransform))
+			{
+				AudioComponent->SetSound(GridTickError);
+				AudioComponent->Play();
+			}
 		}
+		PreviousPreviewTransform = CurrentPreviewTransform;
 	}
 }
 
@@ -48,7 +61,11 @@ void AHandController::GripPressed()
 {
 	GripState = EGripState::Grab;
 	PackageInGrip = FindClosestPackageWithinRange();
-	if(!PackageInGrip) return;
+	if(!PackageInGrip || PackageInGrip->bIsGripped)
+	{
+		PackageInGrip = nullptr;
+		return;
+	}
 	UE_LOG(LogTemp, Warning, TEXT("Triggering %s"), *PackageInGrip->GetName());
 	PackageInGrip->StartInteract(this);
 }
@@ -63,10 +80,26 @@ void AHandController::GripReleased()
 	{
 		if(!GrippablePlayfield->PlacePackage(PackageInGrip))
 		{
+			// Invalid placement inside playfield
 			PackageInGrip->PackageSpawner->SpawnQueue.Insert(PackageInGrip->PackageParameters, 0);
+		} else
+		{
+			if(APackageSpawner::GetRemainingPackageAmount(GetWorld()) <= 1)
+			{
+				// Final package placement
+				AudioComponent->SetSound(FinalPackagePlacement);
+				AudioComponent->Play();
+			} else
+			{
+				// Regular successful placement
+				AudioComponent->SetSound(PackagePlacement);
+				AudioComponent->Play();
+			}
 		}
+		
 	} else
 	{
+		// Invalid placement outside playfield
 		PackageInGrip->PackageSpawner->SpawnQueue.Insert(PackageInGrip->PackageParameters, 0);
 	}
 	
