@@ -58,7 +58,7 @@ void ABilpakkGameState::StartGame(FName Row)
 	if(Row == "")
 	{
 		UE_LOG(LogTemp, Warning, TEXT("No Row Name in Start Game"))
-		Row = LevelDataTable->GetRowNames()[0];
+		Row = LevelDataTable->GetRowNames()[2];
 	}
 	UE_LOG(LogTemp, Warning, TEXT("Starting row: %s"), *Row.ToString());
 	

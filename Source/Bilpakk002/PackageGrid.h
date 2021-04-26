@@ -49,25 +49,41 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	TMap<FIntVector, EPackageType> GetGrid() const { return Grid; } 
 	FIntVector WorldToGridLocation(FVector WorldLocation) const;
+
+	UFUNCTION(BlueprintCallable)
 	FVector GridToWorldLocation(FIntVector GridLocation) const;
+
 	FIntVector RoundFVectorToIntVector(FVector Vector);
 	FVector SnapLocationToGrid(FVector WorldLocation);
-	void SetStatus(FGridRange Range, EPackageType Status);
 	FIntVector CalculatePackageOffset(FGridRange Range);
 	bool CheckRangeVacant(FGridRange Range);
 	bool CheckRangeVacantOrColor(FGridRange Range, EPackageType Color);
 	bool CheckCellVacantOrColor(FIntVector Position, EPackageType Color);
-	void Setup(FGridParameters Parameters);
-	bool FindSpaceForPackage(class AStackablePackage* Package, FGridRange& OutRange, FTransform& Transform);
 
-	UPROPERTY(VisibleAnywhere)
+	UFUNCTION(BlueprintCallable)
+	void SetStatus(FGridRange Range, EPackageType Status);
+	
+	UFUNCTION(BlueprintCallable)
+	void Setup(FGridParameters Parameters, FTransform LocalOffset);
+
+	UFUNCTION(BlueprintCallable)
+	void CalculatePackageBounds(FTransform PackageTransform, FVector LocalBoundMin, FVector LocalBoundsMax,
+	                            FGridRange& OutRange);
+
+	UFUNCTION(BlueprintCallable)
+	bool FindSpaceForPackage(FTransform PackageTransform, UPARAM(ref) FGridRange& OutRange,UPARAM(ref) FTransform& Transform);
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FIntVector Size;
 
 	UPROPERTY(VisibleAnywhere)
 	float CellSize;
 	
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	FTransform GridTransform;
+
+	UFUNCTION(BlueprintCallable)
+    void UpdateDebug();
 	
     FQuat SnapRotationToGrid(FRotator Rotator);
 	FQuat SnapRotationToGridLocal(FRotator Rotator);
@@ -75,7 +91,6 @@ public:
 private:
 	static float SnapRotationAxis(float Degrees);
 	FQuat SnapRotation(FRotator Rotation);
-    void UpdateDebug();
 	bool FindAvailableGridPosition(FIntVector StartGridLocation, FIntVector& ResultPosition, FGridRange& OutRange);
 
 	UPROPERTY(VisibleAnywhere)

@@ -26,10 +26,9 @@ UStaticMeshComponent* UActorPool::GetPooledActor()
 	{
 		InitializeNewPooledActor();
 	}
-	UStaticMeshComponent* NewActor = ActorPool.Pop();
+	UStaticMeshComponent* NewActor = ActorPool.Pop(false);
 	if(!NewActor) return nullptr;
 	NewActor->SetVisibility(true);
-	NewActor->Activate();
 	ActivePackages.Add(NewActor);
 	
 	return NewActor;
@@ -38,6 +37,7 @@ UStaticMeshComponent* UActorPool::GetPooledActor()
 void UActorPool::InitializeNewPooledActor()
 {
 	UStaticMeshComponent* NewComponent = NewObject<UStaticMeshComponent>(GetOwner());
+	NewComponent->AttachToComponent(GetOwner()->GetRootComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 	NewComponent->RegisterComponent();
 	NewComponent->SetVisibility(false);
 	NewComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -49,11 +49,9 @@ void UActorPool::ClearStackedPackages()
 	for (auto Mesh : ActivePackages)
 	{
 		Mesh->SetVisibility(false);
-		Mesh->Deactivate();
-		Mesh->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 		ActorPool.Add(Mesh);
 	}
-	ActivePackages.Empty();
+	ActivePackages.Empty(ActorPool.Num());
 }
 
 

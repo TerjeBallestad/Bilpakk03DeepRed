@@ -41,7 +41,7 @@ bool APlayfieldContainer::PlacePackage(AStackablePackage* ActivePackage)
 	UStaticMeshComponent* NewPackage = StaticMeshPool->GetPooledActor();
 	if(!NewPackage || !PreviewMesh->IsVisible()) return false;
 	
-	NewPackage->AttachToComponent(CarModel, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	//NewPackage->AttachToComponent(CarModel, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 	NewPackage->SetStaticMesh(PreviewMesh->GetStaticMesh());
 	NewPackage->SetMaterial(0,ActivePackage->PackageParameters.Material);
 	NewPackage->SetWorldLocationAndRotation(PreviewActor->GetActorLocation(), PreviewActor->GetActorRotation());
@@ -85,7 +85,7 @@ void APlayfieldContainer::Setup(FBilpakkLevel LevelData)
 	TArray<EPackageType> Colors;
 	LevelDataRowName = FName(LevelData.LevelName.ToString());
 	FColorLibrary().Colors.GetKeys(Colors); 
-	Grid->Setup(LevelData.GridParameters);
+	Grid->Setup(LevelData.GridParameters, FTransform::Identity);
 	PointsCalculator->Setup(Colors, Grid, LevelData.Doors);
 }
 
@@ -100,59 +100,17 @@ void APlayfieldContainer::PanPlayfield()
 
 bool APlayfieldContainer::UpdatePreview(AStackablePackage* ActivePackage, FTransform &InOutPreviewTransform)
 {
-	
-	CalculatePackageBounds(ActivePackage, PreviewRange);
-	if(Grid->FindSpaceForPackage(ActivePackage, PreviewRange, InOutPreviewTransform))
+	FVector Min;
+	FVector Max;
+	PreviewMesh->GetLocalBounds(Min, Max);
+	Grid->CalculatePackageBounds(ActivePackage->GetTransform(), Min, Max, PreviewRange);
+	if(Grid->FindSpaceForPackage(ActivePackage->GetTransform() , PreviewRange, InOutPreviewTransform))
 	{
 		PreviewActor->SetActorTransform(InOutPreviewTransform);
 		PreviewMesh->SetVisibility(true);
 		return true;
-	} else
-	{
-		PreviewMesh->SetVisibility(false);
-		return false;
-	}
+	} 
+	PreviewMesh->SetVisibility(false);
+	return false;
 }
 
-void APlayfieldContainer::CalculatePackageBounds(AStackablePackage* ActivePackage, FGridRange& OutRange)
-{
-	FTransform ActivePackageTransform = ActivePackage->GetTransform();
-	ActivePackageTransform.SetLocation( Grid->SnapLocationToGrid(ActivePackageTransform.GetLocation()));
-	ActivePackageTransform.SetRotation(Grid->SnapRotationToGridLocal(ActivePackageTransform.GetRotation().Rotator()));
-	//DrawDebugCoordinateSystem(GetWorld(), Grid->SnapLocationToGrid(ActivePackageTransform.GetLocation()),ActivePackageTransform.GetRotation().Rotator(), 10, false, 0, 2, .2);
-	//ActivePackage->GetPackageRange(ActivePackageTransform.Rotator());
-	FVector Min;
-	FVector Max;
-	PreviewMesh->GetLocalBounds(Min, Max);
-		
-	Min = ActivePackageTransform.TransformVector(Min);
-	Max = ActivePackageTransform.TransformVector(Max);
-
-	if (Min.X > Max.X)
-	{
-		float Temp = Min.X;
-		Min.X = Max.X;
-		Max.X = Temp;
-	}
-
-	if (Min.Y > Max.Y)
-	{
-		float Temp = Min.Y;
-		Min.Y = Max.Y;
-		Max.Y = Temp;
-	}
-
-	if (Min.Z > Max.Z)
-	{
-		float Temp = Min.Z;
-		Min.Z = Max.Z;
-		Max.Z = Temp;
-	}
-	 //DrawDebugBox(GetWorld(), ActivePackage->GetActorLocation() + FVector::UpVector * 20, (Min - Max) * .5,ActivePackageTransform.GetRotation(), FColor(250,50,55), false, 0, 2);
-
-	OutRange.Min = Grid->RoundFVectorToIntVector(Min / Grid->CellSize);
-	OutRange.Max = Grid->RoundFVectorToIntVector(Max / Grid->CellSize);
-
-	OutRange.Min += Grid->WorldToGridLocation(ActivePackage->GetActorLocation());
-	OutRange.Max += Grid->WorldToGridLocation(ActivePackage->GetActorLocation());
-}

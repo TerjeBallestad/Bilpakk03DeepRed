@@ -25,7 +25,7 @@ void UPackageGrid::TickComponent(float DeltaTime, ELevelTick TickType, FActorCom
 	}
 }	
 
-void UPackageGrid::Setup(FGridParameters Parameters)
+void UPackageGrid::Setup(FGridParameters Parameters, FTransform LocalOffset = FTransform::Identity)
 {
 	Size.X = Parameters.Size.X;
 	Size.Y = Parameters.Size.Y;
@@ -44,14 +44,15 @@ void UPackageGrid::Setup(FGridParameters Parameters)
 		}
 	}
 	GridTransform.SetScale3D(FVector::OneVector * CellSize);
-
+	GridTransform.SetRotation(GetOwner()->GetActorTransform().GetRotation() + LocalOffset.GetRotation());
+	GridTransform.SetLocation(LocalOffset.GetLocation() + GetOwner()->GetActorTransform().TransformPosition(FVector(Size.X -1, Size.Y-1, Size.Z-1) * CellSize * -0.5));
 	for (FGridRange Range : Parameters.DefaultOccupiedGridPositions)
 	{
 		SetStatus(Range, EPackageType::Occupied);	
 	}
 }
 
-bool UPackageGrid::FindSpaceForPackage(AStackablePackage* Package, FGridRange& OutRange, FTransform& Transform)
+bool UPackageGrid::FindSpaceForPackage(FTransform PackageTransform, FGridRange& OutRange, FTransform& Transform)
 {
 	
 
@@ -64,11 +65,11 @@ bool UPackageGrid::FindSpaceForPackage(AStackablePackage* Package, FGridRange& O
 		
 	FIntVector FoundLocation;
 
-	if (FindAvailableGridPosition(WorldToGridLocation(Package->GetActorLocation()) + Offset, FoundLocation,OutRange))
+	if (FindAvailableGridPosition(WorldToGridLocation(PackageTransform.GetLocation()) + Offset, FoundLocation,OutRange))
 	{
 		const FVector PreviewLocation = GridToWorldLocation(FoundLocation);
 		Transform.SetLocation(PreviewLocation);
-		Transform.SetRotation(SnapRotationToGrid(Package->GetActorRotation()));
+		Transform.SetRotation(SnapRotationToGrid(PackageTransform.GetRotation().Rotator()));
 		return true;
 	}
 	return false;
@@ -267,6 +268,43 @@ void UPackageGrid::SetStatus(FGridRange Range, EPackageType Status)
 	}
 }
 
+void UPackageGrid::CalculatePackageBounds(FTransform PackageTransform, FVector LocalBoundMin,FVector LocalBoundsMax, FGridRange& OutRange)
+{
+	FTransform ActivePackageTransform = PackageTransform;
+	ActivePackageTransform.SetLocation( SnapLocationToGrid(ActivePackageTransform.GetLocation()));
+	ActivePackageTransform.SetRotation(SnapRotationToGridLocal(ActivePackageTransform.GetRotation().Rotator()));
+		
+	LocalBoundMin = ActivePackageTransform.TransformVector(LocalBoundMin);
+	LocalBoundsMax = ActivePackageTransform.TransformVector(LocalBoundsMax);
+
+	if (LocalBoundMin.X > LocalBoundsMax.X)
+	{
+		float Temp = LocalBoundMin.X;
+		LocalBoundMin.X = LocalBoundsMax.X;
+		LocalBoundsMax.X = Temp;
+	}
+
+	if (LocalBoundMin.Y > LocalBoundsMax.Y)
+	{
+		float Temp = LocalBoundMin.Y;
+		LocalBoundMin.Y = LocalBoundsMax.Y;
+		LocalBoundsMax.Y = Temp;
+	}
+
+	if (LocalBoundMin.Z > LocalBoundsMax.Z)
+	{
+		float Temp = LocalBoundMin.Z;
+		LocalBoundMin.Z = LocalBoundsMax.Z;
+		LocalBoundsMax.Z = Temp;
+	}
+	
+	OutRange.Min = RoundFVectorToIntVector(LocalBoundMin / CellSize);
+	OutRange.Max = RoundFVectorToIntVector(LocalBoundsMax / CellSize);
+
+	OutRange.Min += WorldToGridLocation(PackageTransform.GetLocation());
+	OutRange.Max += WorldToGridLocation(PackageTransform.GetLocation());
+}
+
 void UPackageGrid::UpdateDebug()
 {	
 	for (int x = 0; x < Size.X; ++x)
@@ -275,7 +313,7 @@ void UPackageGrid::UpdateDebug()
 		{
 			for (int z = 0; z < Size.Z; ++z)
 			{
-				FIntVector GridPosition = FIntVector(x, y, z);
+				FIntVector GridPosition(x, y, z);
 				FVector WorldPosition = GridToWorldLocation(GridPosition);
 
 

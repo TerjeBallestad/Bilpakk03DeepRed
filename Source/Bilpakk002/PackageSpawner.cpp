@@ -22,11 +22,15 @@ void APackageSpawner::Setup(FBilpakkLevel Data)
 	TArray<EPackageType> Colors;
 	ColorLibrary.Colors.GetKeys(Colors);
 
-	for (EPackageType Color : Colors)
+	if(Materials.Num() < 1)
 	{
-		UMaterialInstanceDynamic* Material = UMaterialInstanceDynamic::Create(MaterialClass, this);
-		Material->SetVectorParameterValue("Color", ColorLibrary.Colors[Color]);
-		Materials.Add(Color, Material);
+		for (EPackageType Color : Colors)
+		{
+			UMaterialInstanceDynamic* Material = UMaterialInstanceDynamic::Create(MaterialClass, this);
+			Material->SetVectorParameterValue("Color", ColorLibrary.Colors[Color]);
+			Materials.Add(Color, Material);
+		}
+
 	}
 	
 	PackageLibrary = Data.PackageLibrary;

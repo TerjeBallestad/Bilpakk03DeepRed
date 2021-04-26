@@ -113,7 +113,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FPackageParameters PackageParameters;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UStaticMeshComponent* MeshComponent;
 
 	UPROPERTY()

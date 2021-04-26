@@ -104,8 +104,6 @@ public:
     void ActorEndOverlap(AActor* OverlappedActor, AActor* OtherActor);
     */
 
-	void CalculatePackageBounds(AStackablePackage* ActivePackage, FGridRange& OutRange);
-
 	UFUNCTION(BlueprintImplementableEvent)
 	void Finish();
 
