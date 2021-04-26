@@ -27,6 +27,16 @@ UPointsCalculator::UPointsCalculator()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
+
+
+}
+
+void UPointsCalculator::BeginPlay()
+{
+	Super::BeginPlay();
+
+	MeshPool = NewObject<UActorPool>(GetOwner());
+	MeshPool->RegisterComponent();
 }
 
 
@@ -38,6 +48,26 @@ void UPointsCalculator::Setup(TArray<EPackageType> Colors, UPackageGrid* Grid, T
 	}
 	PackageGrid = Grid;
 	Doors = InDoors;
+}
+
+void UPointsCalculator::SpawnNegativeIndicator(FGridRange Package)
+{
+	FIntVector PackageSize = Package.Max - Package.Min;
+	UStaticMeshComponent* NewCube = MeshPool->GetPooledActor();
+	NewCube->SetStaticMesh(CubeMesh);
+	NewCube->SetMaterial(0, NegativeMaterial);
+	FVector NewPosition = (PackageGrid->GridToWorldLocation(Package.Min) + PackageGrid->GridToWorldLocation(FIntVector(Package.Max.X -1, Package.Max.Y - 1, Package.Max.Z - 1))) / 2;
+	NewCube->SetWorldLocation(NewPosition);
+	NewCube->SetWorldScale3D(FVector(PackageSize) * PackageGrid->CellSize);
+
+	FTimerHandle Handle;
+	 GetWorld ()->GetTimerManager().SetTimer(Handle, this, &UPointsCalculator::SetMeshPoolInvisible, 0.5, false);
+	
+}
+
+void UPointsCalculator::SetMeshPoolInvisible()
+{
+	MeshPool->ClearStackedPackages();
 }
 
 int32 UPointsCalculator::CalculateEndGamePoints()
@@ -63,13 +93,25 @@ int32 UPointsCalculator::CalculateEndGamePoints()
 	
 	for(EPackageType Color: TEnumRange<EPackageType>())
 	{
+
 		for (auto Package : PackageClusters[Color].Chunks)
 		{
+			bool PositiveScore = false;
 			// Check above
 			FGridRange AboveRange(Package);
 			AboveRange.Min.Z = Package.Max.Z;
 			AboveRange.Max.Z = PackageGrid->Size.Z;
-			if(! PackageGrid->CheckRangeVacantOrColor(AboveRange, Color)) continue;
+			if(! PackageGrid->CheckRangeVacantOrColor(AboveRange, Color))
+			{
+				if(!NegativePackages.Contains(Package))
+				{
+					SpawnNegativeIndicator(Package);
+					NegativePackages.Add(Package);
+					if(PositivePackages.Contains(Package))
+						PositivePackages.Remove(Package);
+				}
+				continue;
+			}
 			
 			// Find Closest door
 			int32 ShortestDistance = 1000;
@@ -161,7 +203,15 @@ int32 UPointsCalculator::CalculateEndGamePoints()
 				if	(!PackageGrid->CheckRangeVacantOrColor(WalkRange, Color)) continue;
 
 				Points += 10 * PackageSize.X * PackageSize.Y * PackageSize.Z;
+				PositivePackages.AddUnique(Package);
+				PositiveScore = true;
 				break;
+			}
+			if(!PositiveScore && !NegativePackages.Contains(Package))
+			{
+				SpawnNegativeIndicator(Package);
+				PositivePackages.Remove(Package);
+				NegativePackages.Add(Package);
 			}
 		}
 	}

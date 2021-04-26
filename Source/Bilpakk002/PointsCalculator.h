@@ -4,10 +4,15 @@
 
 #include "CoreMinimal.h"
 
+#include "ActorPool.h"
 #include "PackageGrid.h"
 #include "Components/ActorComponent.h"
 #include "PointsCalculator.generated.h"
 
+FORCEINLINE    bool operator==(const FGridRange &Lhs, const FGridRange& Rhs)
+{
+	return Lhs.Max == Rhs.Max && Lhs.Min == Rhs.Min;
+}
 
 USTRUCT(BlueprintType)
 struct FPackageChunks
@@ -28,8 +33,11 @@ class BILPAKK002_API UPointsCalculator : public UActorComponent
 public:	
 	UPointsCalculator();
 
+	virtual void BeginPlay() override;
+
 	void Setup(TArray<EPackageType> Colors, UPackageGrid* Grid, TArray<FGridRange> InDoors);
-	
+	void SpawnNegativeIndicator(FGridRange Package);
+
 	UFUNCTION(BlueprintCallable)
 	int32 CalculateEndGamePoints();
 
@@ -38,6 +46,12 @@ public:
 
 private:
 	void DrawDebugRange(FIntVector Range);
+
+	UPROPERTY()
+	UActorPool* MeshPool;
+
+	UFUNCTION()
+	void SetMeshPoolInvisible();
 	
 	UPROPERTY()
 	UPackageGrid* PackageGrid;
@@ -47,4 +61,22 @@ private:
 	
 	UPROPERTY(VisibleAnywhere)
 	TMap<EPackageType, FPackageChunks> PackageClusters;
+
+	UPROPERTY()
+	TArray<FGridRange> PositivePackages;
+
+	UPROPERTY()
+	TArray<FGridRange> NegativePackages;
+
+	UPROPERTY(EditDefaultsOnly)
+	UMaterial* NegativeMaterial;
+
+	UPROPERTY(EditDefaultsOnly)
+	UMaterial* PositiveMaterial;
+
+	UPROPERTY(EditDefaultsOnly)
+	UStaticMesh* CubeMesh;
+	
 };
+
+
