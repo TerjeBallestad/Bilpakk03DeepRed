@@ -26,22 +26,23 @@ UStaticMeshComponent* UActorPool::GetPooledActor()
 	{
 		InitializeNewPooledActor();
 	}
-	UStaticMeshComponent* NewActor = ActorPool.Pop(false);
-	if(!NewActor) return nullptr;
-	NewActor->SetVisibility(true);
-	ActivePackages.Add(NewActor);
+	UStaticMeshComponent* Mesh = ActorPool.Pop(false);
+	if(!Mesh) return nullptr;
+	Mesh->AttachToComponent(GetOwner()->GetRootComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	Mesh->SetVisibility(true);
+	ActivePackages.Add(Mesh);
 	
-	return NewActor;
+	return Mesh;
 }
 
 void UActorPool::InitializeNewPooledActor()
 {
-	UStaticMeshComponent* NewComponent = NewObject<UStaticMeshComponent>(GetOwner());
-	NewComponent->AttachToComponent(GetOwner()->GetRootComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-	NewComponent->RegisterComponent();
-	NewComponent->SetVisibility(false);
-	NewComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	ActorPool.Add(NewComponent);
+	UStaticMeshComponent* Mesh = NewObject<UStaticMeshComponent>(GetOwner());
+	Mesh->RegisterComponent();
+	Mesh->SetVisibility(false);
+	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	ActorPool.Add(Mesh);
+	UE_LOG(LogTemp, Warning, TEXT("%d elements from %s"), ActorPool.Num(), *GetOwner()->GetName())
 }
 
 void UActorPool::ClearStackedPackages()
@@ -49,6 +50,7 @@ void UActorPool::ClearStackedPackages()
 	for (auto Mesh : ActivePackages)
 	{
 		Mesh->SetVisibility(false);
+		Mesh->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
 		ActorPool.Add(Mesh);
 	}
 	ActivePackages.Empty(ActorPool.Num());

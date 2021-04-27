@@ -8,6 +8,8 @@
 #include "DrawDebugHelpers.h"
 #include "PackageSpawner.h"
 #include "StackablePackage.h"
+#include "VRCarpakPawn.h"
+#include "Kismet/KismetMathLibrary.h"
 
 APlayfieldContainer::APlayfieldContainer()
 {
@@ -19,6 +21,8 @@ APlayfieldContainer::APlayfieldContainer()
 	Grid = CreateDefaultSubobject<UPackageGrid>(TEXT("Grid"));
 	PointsCalculator = CreateDefaultSubobject<UPointsCalculator>(TEXT("Points Calculator"));
 	StaticMeshPool = CreateDefaultSubobject<UActorPool>(TEXT("StaticMeshPool"));
+	FloatingTextWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("FloatingTextWidget"));
+	FloatingTextWidget->SetupAttachment(CarModel);
 }
 
 void APlayfieldContainer::BeginPlay()
@@ -48,6 +52,10 @@ bool APlayfieldContainer::PlacePackage(AStackablePackage* ActivePackage)
 	Grid->SetStatus(PreviewRange, ActivePackage->PackageParameters.Type);
 	GameState->AddBonusPoints(PointsCalculator->CalculatePlacePackagePoints(PreviewRange, ActivePackage->PackageParameters.Type));
 	GameState->SetPoints(PointsCalculator->CalculateEndGamePoints());
+	FloatingTextWidget->SetWorldLocation(PreviewMesh->Bounds.Origin + FVector::UpVector * PreviewMesh->Bounds.BoxExtent.Z);
+	FRotator WidgetRotation = UKismetMathLibrary::FindLookAtRotation(FloatingTextWidget->GetComponentLocation(),GameState->StackingPawn->VRCamera->GetComponentLocation());
+	WidgetRotation.Pitch = 0;
+	FloatingTextWidget->SetWorldRotation(WidgetRotation);
 	OnPointsAdded.Broadcast();
 	UE_LOG(LogTemp, Warning, TEXT("Returned Points: %d"), ABilpakkGameState::GetPoints(GetWorld()));
 	PreviewMesh->SetVisibility(false);

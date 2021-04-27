@@ -65,6 +65,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UPackageGrid* Grid;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UWidgetComponent* FloatingTextWidget;
+
 	//UPROPERTY()
 	//class AStackablePackage* ActivePackage;
 

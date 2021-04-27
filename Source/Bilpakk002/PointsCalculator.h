@@ -44,6 +44,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	int32 CalculatePlacePackagePoints(FGridRange Range, EPackageType Color);
 
+	UPROPERTY(EditDefaultsOnly)
+	USoundCue* ErrorSound;
+
+	UPROPERTY(EditDefaultsOnly)
+	USoundCue* GoodPlacement;
+
 private:
 	void DrawDebugRange(FIntVector Range);
 
@@ -53,6 +59,9 @@ private:
 	UFUNCTION()
 	void SetMeshPoolInvisible();
 	
+	UPROPERTY()
+	UAudioComponent* AudioComponent;
+
 	UPROPERTY()
 	UPackageGrid* PackageGrid;
 

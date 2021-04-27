@@ -84,17 +84,7 @@ void AHandController::GripReleased()
 			PackageInGrip->PackageSpawner->SpawnQueue.Insert(PackageInGrip->PackageParameters, 0);
 		} else
 		{
-			if(APackageSpawner::GetRemainingPackageAmount(GetWorld()) <= 1)
-			{
-				// Final package placement
-				AudioComponent->SetSound(FinalPackagePlacement);
-				AudioComponent->Play();
-			} else
-			{
-				// Regular successful placement
-				AudioComponent->SetSound(PackagePlacement);
-				AudioComponent->Play();
-			}
+		
 		}
 		
 	} else

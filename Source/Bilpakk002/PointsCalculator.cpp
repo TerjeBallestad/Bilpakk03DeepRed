@@ -7,6 +7,8 @@
 
 #include "DrawDebugHelpers.h"
 #include "PackageGrid.h"
+#include "PackageSpawner.h"
+#include "Components/AudioComponent.h"
 
 bool FPackageChunks::Contains(FIntVector Position)
 {
@@ -26,9 +28,6 @@ bool FPackageChunks::Contains(FIntVector Position)
 UPointsCalculator::UPointsCalculator()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-
-
-
 }
 
 void UPointsCalculator::BeginPlay()
@@ -37,6 +36,9 @@ void UPointsCalculator::BeginPlay()
 
 	MeshPool = NewObject<UActorPool>(GetOwner());
 	MeshPool->RegisterComponent();
+
+	AudioComponent = NewObject<UAudioComponent>(GetOwner());
+	AudioComponent->RegisterComponent();
 }
 
 
@@ -91,9 +93,9 @@ int32 UPointsCalculator::CalculateEndGamePoints()
 	}
 	*/
 	
+	bool AnyNegativeScores = false;
 	for(EPackageType Color: TEnumRange<EPackageType>())
 	{
-
 		for (auto Package : PackageClusters[Color].Chunks)
 		{
 			bool PositiveScore = false;
@@ -107,6 +109,7 @@ int32 UPointsCalculator::CalculateEndGamePoints()
 				{
 					SpawnNegativeIndicator(Package);
 					NegativePackages.Add(Package);
+					AnyNegativeScores = true;
 					if(PositivePackages.Contains(Package))
 						PositivePackages.Remove(Package);
 				}
@@ -202,17 +205,37 @@ int32 UPointsCalculator::CalculateEndGamePoints()
 
 				if	(!PackageGrid->CheckRangeVacantOrColor(WalkRange, Color)) continue;
 
-				Points += 10 * PackageSize.X * PackageSize.Y * PackageSize.Z;
 				PositivePackages.AddUnique(Package);
+				
+				
+				Points += 10 * PackageSize.X * PackageSize.Y * PackageSize.Z;
 				PositiveScore = true;
 				break;
 			}
 			if(!PositiveScore && !NegativePackages.Contains(Package))
 			{
+				AnyNegativeScores = true;
 				SpawnNegativeIndicator(Package);
 				PositivePackages.Remove(Package);
 				NegativePackages.Add(Package);
 			}
+		}
+	}
+	if(AnyNegativeScores)
+	{
+		AudioComponent->SetSound(ErrorSound);
+		AudioComponent->Play();
+	}else {
+		if(APackageSpawner::GetRemainingPackageAmount(GetWorld()) <= 1)
+		{
+			// Final package placement
+			//AudioComponent->SetSound(FinalPackagePlacement);
+			AudioComponent->Play();
+		} else
+		{
+			// Regular successful placement
+			AudioComponent->SetSound(GoodPlacement);
+			AudioComponent->Play();
 		}
 	}
 	return Points;

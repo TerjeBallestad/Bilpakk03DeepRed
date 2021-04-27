@@ -44,11 +44,11 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	USoundCue* GridTick;
 
-	UPROPERTY(EditDefaultsOnly)
+	/*UPROPERTY(EditDefaultsOnly)
 	USoundCue* PackagePlacement;
 
 	UPROPERTY(EditDefaultsOnly)
-	USoundCue* FinalPackagePlacement;
+	USoundCue* FinalPackagePlacement;*/
 
 	UPROPERTY(EditDefaultsOnly)
 	USoundCue* GridTickError;
