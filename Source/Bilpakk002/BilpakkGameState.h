@@ -26,6 +26,7 @@ public:
 		
 	UFUNCTION(BlueprintCallable)
 	void FinishGame();
+	void PlayMusic();
 
 	UFUNCTION(BlueprintCallable)
 	void StartGame(FName Row);
@@ -97,6 +98,7 @@ public:
 	class AVRCarpakPawn* StackingPawn;
 	
 private:
+	bool bFirstTime = true;
 	int32 Points;
 	int32 BonusPoints;	
 };

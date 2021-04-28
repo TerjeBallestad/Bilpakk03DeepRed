@@ -49,16 +49,20 @@ void ABilpakkGameState::FinishGame()
 	OnFinishedGame.Broadcast();
 }
 
-void ABilpakkGameState::StartGame(FName Row)
+void ABilpakkGameState::PlayMusic()
 {
 	if(AudioComponent && !AudioComponent->IsPlaying())
 		AudioComponent->Play();
+}
+
+void ABilpakkGameState::StartGame(FName Row)
+{
 	Points = 0;
 	BonusPoints = 0;
 	if(Row == "")
 	{
 		UE_LOG(LogTemp, Warning, TEXT("No Row Name in Start Game"))
-		Row = LevelDataTable->GetRowNames()[2];
+		Row = LevelDataTable->GetRowNames()[0];
 	}
 	UE_LOG(LogTemp, Warning, TEXT("Starting row: %s"), *Row.ToString());
 	
@@ -103,6 +107,14 @@ void ABilpakkGameState::StartGame(FName Row)
 	IsFinished = false;
 	PC->Possess(StackingPawn);
 	OnNewGame.Broadcast();
+	if(bFirstTime)
+	{
+		bFirstTime = false;
+	} else
+	{
+		FTimerHandle Handle;
+		GetWorldTimerManager().SetTimer(Handle, this, &ABilpakkGameState::PlayMusic, 10);
+	}
 }
 
 void ABilpakkGameState::SetPoints(int32 Amount)
