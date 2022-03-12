@@ -71,7 +71,7 @@ public:
 	                            FGridRange& OutRange);
 
 	UFUNCTION(BlueprintCallable)
-	bool FindSpaceForPackage(FTransform PackageTransform, UPARAM(ref) FGridRange& OutRange,UPARAM(ref) FTransform& Transform);
+	bool FindSpaceForPackage(FTransform PackageTransform, UPARAM(ref) FGridRange& OutRange,UPARAM(ref) FTransform& OutTransform);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FIntVector Size;

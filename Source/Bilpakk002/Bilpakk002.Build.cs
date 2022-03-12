@@ -8,7 +8,7 @@ public class Bilpakk002 : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "UMG", "AndroidPermission" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "UMG", "AndroidPermission", "OculusMR" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

@@ -61,7 +61,7 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	USoundCue* Music;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	UAudioComponent* AudioComponent;
 	
 	UPROPERTY(EditAnywhere)

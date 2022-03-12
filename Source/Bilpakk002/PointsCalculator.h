@@ -25,6 +25,24 @@ struct FPackageChunks
 	bool Contains(FIntVector Position);
 };
 
+USTRUCT(BlueprintType)
+struct FPoints
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Points Calculator")
+	int32 Total;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Points Calculator")
+	int32 Negative;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Points Calculator")
+	int32 Bonus;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Points Calculator")
+	int32 Diff;
+};
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class BILPAKK002_API UPointsCalculator : public UActorComponent
 {
@@ -39,7 +57,7 @@ public:
 	void SpawnNegativeIndicator(FGridRange Package);
 
 	UFUNCTION(BlueprintCallable)
-	int32 CalculateEndGamePoints();
+	FPoints CalculateEndGamePoints();
 
 	UFUNCTION(BlueprintCallable)
 	int32 CalculatePlacePackagePoints(FGridRange Range, EPackageType Color);
@@ -50,6 +68,9 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	USoundCue* GoodPlacement;
 
+	UPROPERTY(EditDefaultsOnly)
+	USoundCue* FinalPlacement;
+
 private:
 	void DrawDebugRange(FIntVector Range);
 
@@ -58,7 +79,11 @@ private:
 
 	UFUNCTION()
 	void SetMeshPoolInvisible();
-	
+	int32 CalculatePackagePoints(FIntVector PackageSize);
+
+	UPROPERTY()
+	int32 PreviousPoints = 0;
+
 	UPROPERTY()
 	UAudioComponent* AudioComponent;
 

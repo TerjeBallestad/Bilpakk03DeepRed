@@ -8,6 +8,7 @@
 #include "BilpakkSave.h"
 #include "PlayfieldContainer.h"
 #include "VRCarpakPawn.h"
+#include "OculusMRFunctionLibrary.h"
 #include "AndroidPermissionFunctionLibrary.h"
 #include "Components/AudioComponent.h"
 
@@ -52,7 +53,11 @@ void ABilpakkGameState::FinishGame()
 void ABilpakkGameState::PlayMusic()
 {
 	if(AudioComponent && !AudioComponent->IsPlaying())
+	{
+		AudioComponent->SetSound(Music);
 		AudioComponent->Play();
+	}
+		
 }
 
 void ABilpakkGameState::StartGame(FName Row)
@@ -99,19 +104,20 @@ void ABilpakkGameState::StartGame(FName Row)
 		Playfield->InitializeEvents(this);
 	}
 	
-	
 	UIPawn->SetActorHiddenInGame(true);
 	StackingPawn->SetActorHiddenInGame(false);
 	StackingPawn->SetupMap();
 	IsPaused = false;
-	IsFinished = false;
 	PC->Possess(StackingPawn);
 	OnNewGame.Broadcast();
 	if(bFirstTime)
 	{
+		TogglePause();
 		bFirstTime = false;
+		IsFinished = true;
 	} else
 	{
+		IsFinished = false;
 		FTimerHandle Handle;
 		GetWorldTimerManager().SetTimer(Handle, this, &ABilpakkGameState::PlayMusic, 10);
 	}
@@ -131,8 +137,9 @@ void ABilpakkGameState::BeginPlay()
 {
 	Super::BeginPlay();
 
-	TogglePause();
-
+	UOculusMRFunctionLibrary::IsMrcEnabled();
+	
+	
 	AActor* MusicActor = GetWorld()->SpawnActor<AActor>();
 	AudioComponent = NewObject<UAudioComponent>(MusicActor);
 	AudioComponent->RegisterComponent();

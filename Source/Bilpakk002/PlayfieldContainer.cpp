@@ -23,6 +23,8 @@ APlayfieldContainer::APlayfieldContainer()
 	StaticMeshPool = CreateDefaultSubobject<UActorPool>(TEXT("StaticMeshPool"));
 	FloatingTextWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("FloatingTextWidget"));
 	FloatingTextWidget->SetupAttachment(CarModel);
+	NegativeFloatingTextWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("NegativeFloatingTextWidget"));
+	NegativeFloatingTextWidget->SetupAttachment(CarModel);
 }
 
 void APlayfieldContainer::BeginPlay()
@@ -50,14 +52,26 @@ bool APlayfieldContainer::PlacePackage(AStackablePackage* ActivePackage)
 	NewPackage->SetMaterial(0,ActivePackage->PackageParameters.Material);
 	NewPackage->SetWorldLocationAndRotation(PreviewActor->GetActorLocation(), PreviewActor->GetActorRotation());
 	Grid->SetStatus(PreviewRange, ActivePackage->PackageParameters.Type);
-	GameState->AddBonusPoints(PointsCalculator->CalculatePlacePackagePoints(PreviewRange, ActivePackage->PackageParameters.Type));
-	GameState->SetPoints(PointsCalculator->CalculateEndGamePoints());
+	int32 Bonus = PointsCalculator->CalculatePlacePackagePoints(PreviewRange, ActivePackage->PackageParameters.Type);
+	GameState->AddBonusPoints(Bonus);
+	Points = PointsCalculator->CalculateEndGamePoints();
+	Points.Diff += Bonus;
+	Points.Bonus = Bonus;
+	if(Points.Diff == abs(Points.Negative))
+	{
+		Points.Diff = 0;
+		Points.Negative = 0;
+	}
+	GameState->SetPoints(Points.Total);
 	FloatingTextWidget->SetWorldLocation(PreviewMesh->Bounds.Origin + FVector::UpVector * PreviewMesh->Bounds.BoxExtent.Z);
+	NegativeFloatingTextWidget->SetWorldLocation(PreviewMesh->Bounds.Origin + FVector::UpVector * PreviewMesh->Bounds.BoxExtent.Z);
+	
 	FRotator WidgetRotation = UKismetMathLibrary::FindLookAtRotation(FloatingTextWidget->GetComponentLocation(),GameState->StackingPawn->VRCamera->GetComponentLocation());
 	WidgetRotation.Pitch = 0;
 	FloatingTextWidget->SetWorldRotation(WidgetRotation);
+	NegativeFloatingTextWidget->SetWorldRotation(WidgetRotation);
 	OnPointsAdded.Broadcast();
-	UE_LOG(LogTemp, Warning, TEXT("Returned Points: %d"), ABilpakkGameState::GetPoints(GetWorld()));
+	UE_LOG(LogTemp, Warning, TEXT("Returned Points: %d, and %d negative points, %d bonus, %d diff, %d from gamestate"), Points.Total, Points.Negative, Points.Bonus, Points.Diff, ABilpakkGameState::GetPoints(GetWorld()));
 	PreviewMesh->SetVisibility(false);
 	return true;
 	//TODO Disable collision
@@ -114,7 +128,10 @@ bool APlayfieldContainer::UpdatePreview(AStackablePackage* ActivePackage, FTrans
 	Grid->CalculatePackageBounds(ActivePackage->GetTransform(), Min, Max, PreviewRange);
 	if(Grid->FindSpaceForPackage(ActivePackage->GetTransform() , PreviewRange, InOutPreviewTransform))
 	{
-		PreviewActor->SetActorTransform(InOutPreviewTransform);
+		if(PreviewMovementThreshold < FVector::Distance(PreviewActor->GetActorLocation(), InOutPreviewTransform.GetLocation()))
+		{
+			PreviewActor->SetActorTransform(InOutPreviewTransform);
+		}
 		PreviewMesh->SetVisibility(true);
 		return true;
 	} 

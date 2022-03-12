@@ -30,7 +30,6 @@ protected:
 	virtual void BeginPlay() override;
 	void PanPlayfield();
 
-
 	UPROPERTY(EditDefaultsOnly)
 	FTransform SpawnLocation;
 
@@ -39,6 +38,9 @@ protected:
 	
 	UPROPERTY()
 	AActor* PreviewActor;
+
+	UPROPERTY()
+	FTransform PreviousPreviewTransform;
 
 	UPROPERTY()
 	FGridRange PreviewRange;
@@ -68,6 +70,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UWidgetComponent* FloatingTextWidget;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UWidgetComponent* NegativeFloatingTextWidget;
+
 	//UPROPERTY()
 	//class AStackablePackage* ActivePackage;
 
@@ -81,8 +86,14 @@ public:
 	void StopUpdatingPreview();
 	bool UpdatePreview(AStackablePackage* ActivePackage, FTransform& InOutPreviewTransform);
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	FPoints Points;
+
 	UFUNCTION(BlueprintNativeEvent)
 	void InitializeEvents(class ABilpakkGameState *State);
+
+	UPROPERTY(EditDefaultsOnly)
+	float PreviewMovementThreshold = 0.1;
 
 	UFUNCTION(BlueprintCallable)
 	void Setup(FBilpakkLevel LevelData);

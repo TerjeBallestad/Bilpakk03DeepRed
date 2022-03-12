@@ -4,7 +4,7 @@
 #include "PointsCalculator.h"
 
 
-
+#include "BilpakkGameState.h"
 #include "DrawDebugHelpers.h"
 #include "PackageGrid.h"
 #include "PackageSpawner.h"
@@ -72,10 +72,18 @@ void UPointsCalculator::SetMeshPoolInvisible()
 	MeshPool->ClearStackedPackages();
 }
 
-int32 UPointsCalculator::CalculateEndGamePoints()
+int32 UPointsCalculator::CalculatePackagePoints(FIntVector PackageSize)
 {
-	int32 Points = 0;
+	return 10 * PackageSize.X * PackageSize.Y * PackageSize.Z;
+}
 
+FPoints UPointsCalculator::CalculateEndGamePoints()
+{
+	FPoints Points;
+	Points.Total = 0;
+	Points.Negative = 0;
+	Points.Bonus = 0;
+	
 	// Only for debug
 	/*for (auto Door : Doors)
 	{
@@ -99,6 +107,7 @@ int32 UPointsCalculator::CalculateEndGamePoints()
 		for (auto Package : PackageClusters[Color].Chunks)
 		{
 			bool PositiveScore = false;
+			FIntVector PackageSize = Package.Max - Package.Min;
 			// Check above
 			FGridRange AboveRange(Package);
 			AboveRange.Min.Z = Package.Max.Z;
@@ -109,6 +118,7 @@ int32 UPointsCalculator::CalculateEndGamePoints()
 				{
 					SpawnNegativeIndicator(Package);
 					NegativePackages.Add(Package);
+					Points.Negative -= CalculatePackagePoints(PackageSize);
 					AnyNegativeScores = true;
 					if(PositivePackages.Contains(Package))
 						PositivePackages.Remove(Package);
@@ -138,7 +148,6 @@ int32 UPointsCalculator::CalculateEndGamePoints()
 			}
 			//DrawDebugBox(GetWorld(), PackageGrid->GridToWorldLocation(ClosestPosition), PackageGrid->GridTransform.GetScale3D() * FVector(0.4, 0.4, 0.4),GetOwner()->GetActorRotation().Quaternion(), FColor(25,25,255), false, 0, 2);					
 			//DrawDebugBox(GetWorld(), PackageGrid->GridToWorldLocation(Package.Min), PackageGrid->GridTransform.GetScale3D() * FVector(0.5, 0.5, 0.5),GetOwner()->GetActorRotation().Quaternion(), FColor(250,250,255), false, 0, 2);					
-			FIntVector PackageSize = Package.Max - Package.Min;
 
 			// Straight line 
 			int32 WalkX = ClosestPosition.X - Package.Min.X;
@@ -208,13 +217,14 @@ int32 UPointsCalculator::CalculateEndGamePoints()
 				PositivePackages.AddUnique(Package);
 				
 				
-				Points += 10 * PackageSize.X * PackageSize.Y * PackageSize.Z;
+				Points.Total += CalculatePackagePoints(PackageSize);
 				PositiveScore = true;
 				break;
 			}
 			if(!PositiveScore && !NegativePackages.Contains(Package))
 			{
 				AnyNegativeScores = true;
+				Points.Negative -= CalculatePackagePoints(PackageSize);
 				SpawnNegativeIndicator(Package);
 				PositivePackages.Remove(Package);
 				NegativePackages.Add(Package);
@@ -229,7 +239,8 @@ int32 UPointsCalculator::CalculateEndGamePoints()
 		if(APackageSpawner::GetRemainingPackageAmount(GetWorld()) <= 1)
 		{
 			// Final package placement
-			//AudioComponent->SetSound(FinalPackagePlacement);
+			Cast<ABilpakkGameState>(GetWorld()->GetGameState())->AudioComponent->Stop();
+			AudioComponent->SetSound(FinalPlacement);
 			AudioComponent->Play();
 		} else
 		{
@@ -238,6 +249,9 @@ int32 UPointsCalculator::CalculateEndGamePoints()
 			AudioComponent->Play();
 		}
 	}
+
+	Points.Diff = Points.Total + abs(Points.Negative) - PreviousPoints;
+	PreviousPoints = Points.Total;
 	return Points;
 }
 

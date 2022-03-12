@@ -52,7 +52,7 @@ void UPackageGrid::Setup(FGridParameters Parameters, FTransform LocalOffset = FT
 	}
 }
 
-bool UPackageGrid::FindSpaceForPackage(FTransform PackageTransform, FGridRange& OutRange, FTransform& Transform)
+bool UPackageGrid::FindSpaceForPackage(FTransform PackageTransform, FGridRange& OutRange, FTransform& OutTransform)
 {
 	
 
@@ -68,8 +68,8 @@ bool UPackageGrid::FindSpaceForPackage(FTransform PackageTransform, FGridRange& 
 	if (FindAvailableGridPosition(WorldToGridLocation(PackageTransform.GetLocation()) + Offset, FoundLocation,OutRange))
 	{
 		const FVector PreviewLocation = GridToWorldLocation(FoundLocation);
-		Transform.SetLocation(PreviewLocation);
-		Transform.SetRotation(SnapRotationToGrid(PackageTransform.GetRotation().Rotator()));
+		OutTransform.SetLocation(PreviewLocation);
+		OutTransform.SetRotation(SnapRotationToGrid(PackageTransform.GetRotation().Rotator()));
 		return true;
 	}
 	return false;
