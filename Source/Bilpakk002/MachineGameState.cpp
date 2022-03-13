@@ -24,6 +24,13 @@ void AMachineGameState::StartGame(FName Row)
 		PC = GetWorld() != nullptr ? GetWorld()->GetFirstPlayerController<APlayerController>() : nullptr;
 		if(PC == nullptr) UE_LOG(LogTemp, Error, TEXT("Player controller is null --- Game State"))
 	}
+	if(!StackingPawn)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No Stacking pawn"))
+		StackingPawn = Cast<AVRCarpakPawn>(PC->GetPawn());
+		StackingPawn->InitializeEvents(this);
+		StackingPawn->Setup();
+	}
 	if(!PackageSpawner)
 	{
 		PackageSpawner = GetWorld()->SpawnActor<APackageSpawner>(PackageSpawnerClass);

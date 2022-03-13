@@ -9,7 +9,6 @@
 #include "PlayfieldContainer.h"
 #include "VRCarpakPawn.h"
 #include "OculusMRFunctionLibrary.h"
-#include "AndroidPermissionFunctionLibrary.h"
 #include "Components/AudioComponent.h"
 
 void ABilpakkGameState::TogglePause()
