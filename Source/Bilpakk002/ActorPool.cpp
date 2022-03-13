@@ -42,7 +42,7 @@ void UActorPool::InitializeNewPooledActor()
 	Mesh->SetVisibility(false);
 	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	ActorPool.Add(Mesh);
-	UE_LOG(LogTemp, Warning, TEXT("%d elements from %s"), ActorPool.Num(), *GetOwner()->GetName())
+	//UE_LOG(LogTemp, Warning, TEXT("%d elements from %s"), ActorPool.Num(), *GetOwner()->GetName())
 }
 
 void UActorPool::ClearStackedPackages()

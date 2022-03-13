@@ -29,7 +29,7 @@ public:
 	void PlayMusic();
 
 	UFUNCTION(BlueprintCallable)
-	void StartGame(FName Row);
+	virtual void StartGame(FName Row);
 
 	UPROPERTY(BlueprintReadWrite)
 	bool IsPaused = false;
@@ -97,7 +97,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class AVRCarpakPawn* StackingPawn;
 	
-private:
+protected:
 	bool bFirstTime = true;
 	int32 Points;
 	int32 BonusPoints;	
