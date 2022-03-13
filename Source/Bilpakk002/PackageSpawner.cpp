@@ -102,7 +102,7 @@ void APackageSpawner::InitializeEvents_Implementation(ABilpakkGameState* State)
 	GameState->OnUnPausedGame.AddDynamic(this, &APackageSpawner::UnPause);
 }
 
-void APackageSpawner::ShuffleArray(TArray<FPackageParameters>& Array)
+void APackageSpawner::ShuffleArray(TArray<FPackageParameters>& Array) const
 {
 	if (Array.Num() > 0)
 	{

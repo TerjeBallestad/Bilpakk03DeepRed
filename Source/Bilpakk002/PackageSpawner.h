@@ -108,5 +108,5 @@ private:
 	TMap<EPackageSize, FPackageParameters> PackageLibrary;
 	
 	
-	void ShuffleArray(TArray<FPackageParameters>& Array);
+	void ShuffleArray(TArray<FPackageParameters>& Array) const;
 };

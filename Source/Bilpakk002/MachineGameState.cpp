@@ -24,6 +24,11 @@ void AMachineGameState::StartGame(FName Row)
 		PC = GetWorld() != nullptr ? GetWorld()->GetFirstPlayerController<APlayerController>() : nullptr;
 		if(PC == nullptr) UE_LOG(LogTemp, Error, TEXT("Player controller is null --- Game State"))
 	}
+	if(!PackageSpawner)
+	{
+		PackageSpawner = GetWorld()->SpawnActor<APackageSpawner>(PackageSpawnerClass);
+		PackageSpawner->InitializeEvents(this);
+	}
 	if(!Playfield)
 	{
 		Playfield = GetWorld()->SpawnActor<APlayfieldContainer>(PlayfieldClass);

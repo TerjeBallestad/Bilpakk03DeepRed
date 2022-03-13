@@ -27,6 +27,7 @@ void ABilpakkGameModeBase::BeginPlay()
 	}
 }
 
+//This runs when loading a level
 void ABilpakkGameModeBase::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
 {
 	Super::InitGame(MapName, Options, ErrorMessage);
