@@ -79,6 +79,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
     void UnPause();
 	
+	UFUNCTION(BlueprintCallable)
+	class AStackablePackage* GetNextPackage();
+	
 private:
 	
 	UPROPERTY(EditDefaultsOnly)
@@ -86,9 +89,6 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	FTransform PackageSpawnLocation;
-	
-	UFUNCTION(BlueprintCallable)
-	class AStackablePackage* GetNextPackage();
 
 	UFUNCTION(BlueprintCallable)
 	void RemoveFirstPackageFromQueue();

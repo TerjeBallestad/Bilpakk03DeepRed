@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BilpakkGameState.h"
 #include "GameFramework/Pawn.h"
 #include "MachinePawn.generated.h"
 
@@ -35,4 +36,7 @@ private:
 	void RotateRight();
 	void FlipForward();
 	void FlipBackward();
+
+	UPROPERTY()
+	ABilpakkGameState* GameState;
 };

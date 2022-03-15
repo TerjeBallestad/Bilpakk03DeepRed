@@ -40,6 +40,9 @@ protected:
 	AActor* PreviewActor;
 
 	UPROPERTY()
+	FIntVector PackagePreviewGridPosition;
+
+	UPROPERTY()
 	FTransform PreviousPreviewTransform;
 
 	UPROPERTY()
@@ -73,18 +76,23 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UWidgetComponent* NegativeFloatingTextWidget;
 
-	//UPROPERTY()
-	//class AStackablePackage* ActivePackage;
+	UPROPERTY()
+	class AStackablePackage* ActivePackage;
+
+	UPROPERTY()
+	AActor* ActivePackageRotator;
 
 	UPROPERTY(VisibleAnywhere)
 	UPointsCalculator* PointsCalculator;
 	
 public:	
 	//virtual void Tick(float DeltaTime) override;
-	bool PlacePackage(AStackablePackage* ActivePackage);
+	bool PlacePackage(AStackablePackage* Package);
 	void StartUpdatingPreview(UMaterialInstance* Material, UStaticMesh* Mesh);
 	void StopUpdatingPreview();
-	bool UpdatePreview(AStackablePackage* ActivePackage, FTransform& InOutPreviewTransform);
+	bool UpdatePreview(AStackablePackage* Package, FTransform& InOutPreviewTransform);
+	void MovePreviewBlock(FIntVector MovementDelta);
+	void RotatePreviewBlock(FRotator RotationDelta);
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	FPoints Points;
