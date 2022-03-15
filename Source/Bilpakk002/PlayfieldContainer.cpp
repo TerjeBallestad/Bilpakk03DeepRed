@@ -126,6 +126,7 @@ void APlayfieldContainer::Setup(FBilpakkLevel LevelData)
 	ActivePackage->MeshComponent->GetLocalBounds(Min, Max);
 
 	const FVector Middle = (Max + Min) / 2 + PreviewLocation;
+	UE_LOG(LogTemp, Warning, TEXT("min: %s "), *((Max + Min) / 2).ToString());
 	DrawDebugBox(GetWorld(), PreviewLocation, FVector::OneVector, FColor::Cyan, true, 10,0,1);
 	ActivePackageRotator->SetActorLocation(Middle);
 	ActivePackage->AttachToActor(ActivePackageRotator, FAttachmentTransformRules::KeepWorldTransform);
@@ -186,8 +187,7 @@ void APlayfieldContainer::RotatePreviewBlock(FRotator RotationDelta)
 {
 	//FRotator NewRotation(ActivePackageRotator->GetActorRotation().Add(RotationDelta.Pitch, RotationDelta.Yaw, RotationDelta.Roll));
 	ActivePackageRotator->AddActorWorldRotation(RotationDelta);
-	MovePreviewBlock(FIntVector());
-	//FTransform outTransform;
-	//UpdatePreview(ActivePackage, outTransform);
+	FTransform outTransform;
+	UpdatePreview(ActivePackage, outTransform);
 }
 
