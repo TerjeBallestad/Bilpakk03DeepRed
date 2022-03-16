@@ -66,13 +66,16 @@ bool APlayfieldContainer::PlacePackage(AStackablePackage* Package)
 	FloatingTextWidget->SetWorldLocation(PreviewMesh->Bounds.Origin + FVector::UpVector * PreviewMesh->Bounds.BoxExtent.Z);
 	NegativeFloatingTextWidget->SetWorldLocation(PreviewMesh->Bounds.Origin + FVector::UpVector * PreviewMesh->Bounds.BoxExtent.Z);
 	
-	FRotator WidgetRotation = UKismetMathLibrary::FindLookAtRotation(FloatingTextWidget->GetComponentLocation(),GameState->StackingPawn->VRCamera->GetComponentLocation());
+	FRotator WidgetRotation = UKismetMathLibrary::FindLookAtRotation(FloatingTextWidget->GetComponentLocation(),GameState->MLPawn->PlayerCamera->GetComponentLocation());
 	WidgetRotation.Pitch = 0;
 	FloatingTextWidget->SetWorldRotation(WidgetRotation);
 	NegativeFloatingTextWidget->SetWorldRotation(WidgetRotation);
 	OnPointsAdded.Broadcast();
 	UE_LOG(LogTemp, Warning, TEXT("Returned Points: %d, and %d negative points, %d bonus, %d diff, %d from gamestate"), Points.Total, Points.Negative, Points.Bonus, Points.Diff, ABilpakkGameState::GetPoints(GetWorld()));
 	PreviewMesh->SetVisibility(false);
+	GetNewActivePackage();
+	GameState->PackageSpawner->PackagePool->ReturnPackage(Package);
+
 	return true;
 	//TODO Disable collision
 }
@@ -92,7 +95,7 @@ void APlayfieldContainer::StopUpdatingPreview()
 	bUpdatePreview = false;
 }
 
-void APlayfieldContainer::InitializeEvents_Implementation(ABilpakkGameState* State)
+void APlayfieldContainer::InitializeEvents_Implementation(AMachineGameState* State)
 {
 	GameState = State;
 	SetActorTransform(SpawnLocation);
@@ -110,7 +113,8 @@ void APlayfieldContainer::Setup(FBilpakkLevel LevelData)
 	Grid->Setup(LevelData.GridParameters, FTransform::Identity);
 	PointsCalculator->Setup(Colors, Grid, LevelData.Doors);
 	PackagePreviewGridPosition = FIntVector(4,4,4);
-	ActivePackage = GameState->PackageSpawner->GetNextPackage();
+	GetNewActivePackage();
+/*	ActivePackage = GameState->PackageSpawner->GetNextPackage();
 	//ActivePackage->MeshComponent->SetVisibility(false);
 	const FVector PreviewLocation = Grid->GridToWorldLocation(PackagePreviewGridPosition);
 	ActivePackage->SetActorLocation(PreviewLocation);
@@ -133,7 +137,7 @@ void APlayfieldContainer::Setup(FBilpakkLevel LevelData)
 	ActivePackageRotator->SetActorLocation(PreviewLocation);
 	StartUpdatingPreview(ActivePackage->PackageParameters.Material, ActivePackage->MeshComponent->GetStaticMesh());
 	FTransform outTransform;
-	UpdatePreview(ActivePackage, outTransform);
+	UpdatePreview(ActivePackage, outTransform);*/
 }
 
 void APlayfieldContainer::PanPlayfield()
@@ -143,6 +147,39 @@ void APlayfieldContainer::PanPlayfield()
 	Degrees *=10;
 	const FRotator Delta = FRotator(0,Degrees,0);
 	CarModel->AddRelativeRotation(Delta);
+}
+
+void APlayfieldContainer::GetNewActivePackage()
+{
+	if(ActivePackage) ActivePackage->StopInteract();
+	ActivePackage = GameState->PackageSpawner->GetNextPackage();
+	
+	const FVector PreviewLocation = Grid->GridToWorldLocation(PackagePreviewGridPosition);
+
+	if(!ActivePackageRotator)
+	{
+		ActivePackage->SetActorLocation(PreviewLocation);
+		ActivePackageRotator = GetWorld()->SpawnActor<AActor>();
+		UStaticMeshComponent *NewMesh = NewObject<UStaticMeshComponent>(ActivePackageRotator);
+		NewMesh->RegisterComponent();
+		NewMesh->SetMobility(EComponentMobility::Movable);
+		NewMesh->SetVisibility(false);
+		ActivePackageRotator->SetRootComponent(NewMesh);
+	}
+
+	FVector Min, Max;
+	ActivePackage->MeshComponent->GetLocalBounds(Min, Max);
+
+	const FVector Middle = (Max + Min) / 2 + PreviewLocation;
+	UE_LOG(LogTemp, Warning, TEXT("min: %s "), *((Max + Min) / 2).ToString());
+	DrawDebugBox(GetWorld(), PreviewLocation, FVector::OneVector, FColor::Cyan, true, 10,0,1);
+	ActivePackageRotator->SetActorLocation(Middle);
+	ActivePackage->AttachToActor(ActivePackageRotator, FAttachmentTransformRules::KeepWorldTransform);
+	ActivePackageRotator->SetActorLocation(PreviewLocation);
+	StartUpdatingPreview(ActivePackage->PackageParameters.Material, ActivePackage->MeshComponent->GetStaticMesh());
+	FTransform outTransform;
+	UpdatePreview(ActivePackage, outTransform);
+	
 }
 
 bool APlayfieldContainer::UpdatePreview(AStackablePackage* Package, FTransform &InOutPreviewTransform)
@@ -189,5 +226,10 @@ void APlayfieldContainer::RotatePreviewBlock(FRotator RotationDelta)
 	ActivePackageRotator->AddActorWorldRotation(RotationDelta);
 	FTransform outTransform;
 	UpdatePreview(ActivePackage, outTransform);
+}
+
+void APlayfieldContainer::PlaceActivePackage()
+{
+	PlacePackage(ActivePackage);	
 }
 

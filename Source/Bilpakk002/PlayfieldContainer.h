@@ -7,6 +7,7 @@
 
 
 #include "BilpakkGameState.h"
+#include "MachineGameState.h"
 #include "PackageGrid.h"
 #include "PointsCalculator.h"
 
@@ -23,12 +24,13 @@ public:
 	APlayfieldContainer();
 
 	UPROPERTY(BlueprintReadOnly)
-	ABilpakkGameState* GameState;
+	AMachineGameState* GameState;
 
 
 protected:
 	virtual void BeginPlay() override;
 	void PanPlayfield();
+	void GetNewActivePackage();
 
 	UPROPERTY(EditDefaultsOnly)
 	FTransform SpawnLocation;
@@ -93,12 +95,13 @@ public:
 	bool UpdatePreview(AStackablePackage* Package, FTransform& InOutPreviewTransform);
 	void MovePreviewBlock(FIntVector MovementDelta);
 	void RotatePreviewBlock(FRotator RotationDelta);
+	void PlaceActivePackage();
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	FPoints Points;
 
 	UFUNCTION(BlueprintNativeEvent)
-	void InitializeEvents(class ABilpakkGameState *State);
+	void InitializeEvents(class AMachineGameState *State);
 
 	UPROPERTY(EditDefaultsOnly)
 	float PreviewMovementThreshold = 0.1;

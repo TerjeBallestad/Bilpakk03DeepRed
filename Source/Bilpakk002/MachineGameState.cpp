@@ -35,6 +35,10 @@ void AMachineGameState::StartGame(FName Row)
 		Playfield = GetWorld()->SpawnActor<APlayfieldContainer>(PlayfieldClass);
 		Playfield->InitializeEvents(this);
 	}
+	if(!MLPawn)
+	{
+		MLPawn = Cast<AMachinePawn>(PC->GetPawn());
+	}
 
 	//StackingPawn->SetupMap();
 	IsPaused = false;

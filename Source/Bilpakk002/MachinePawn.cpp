@@ -10,6 +10,14 @@ AMachinePawn::AMachinePawn()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	UMeshComponent *root = CreateDefaultSubobject<UMeshComponent>(TEXT("Root"));
+	SetRootComponent(root);
+
+	CameraArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraArm2"));
+	CameraArm->SetupAttachment(root);
+
+	PlayerCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("PlayerCamera"));
+	PlayerCamera->SetupAttachment(CameraArm);
 }
 
 void AMachinePawn::BeginPlay()
@@ -42,6 +50,12 @@ void AMachinePawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	PlayerInputComponent->BindAction(TEXT("RotateRight"), IE_Pressed,this, &AMachinePawn::RotateRight);
 	PlayerInputComponent->BindAction(TEXT("FlipForward"), IE_Pressed,this, &AMachinePawn::FlipForward);
 	PlayerInputComponent->BindAction(TEXT("FlipBackward"), IE_Pressed,this, &AMachinePawn::FlipBackward);
+	PlayerInputComponent->BindAction(TEXT("PlacePackage"), IE_Pressed,this, &AMachinePawn::PlacePackage);
+}
+
+void AMachinePawn::PlacePackage()
+{
+	GameState->Playfield->PlaceActivePackage();
 }
 
 void AMachinePawn::MoveLeft()

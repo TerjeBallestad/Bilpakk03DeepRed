@@ -100,7 +100,7 @@ void ABilpakkGameState::StartGame(FName Row)
 	if(!Playfield)
 	{
 		Playfield = GetWorld()->SpawnActor<APlayfieldContainer>(PlayfieldClass);
-		Playfield->InitializeEvents(this);
+		//Playfield->InitializeEvents(this);
 	}
 	
 	UIPawn->SetActorHiddenInGame(true);

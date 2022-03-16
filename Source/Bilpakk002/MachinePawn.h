@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "BilpakkGameState.h"
+#include "Camera/CameraComponent.h"
 #include "GameFramework/Pawn.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "MachinePawn.generated.h"
 
 UCLASS()
@@ -27,7 +29,14 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UPROPERTY(EditDefaultsOnly)
+	UCameraComponent *PlayerCamera;
+
+	UPROPERTY(EditDefaultsOnly)
+	USpringArmComponent *CameraArm;
+
 private:
+	void PlacePackage();
 	void MoveLeft();
 	void MoveRight();
 	void MoveUp();

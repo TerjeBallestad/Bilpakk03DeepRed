@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BilpakkGameState.h"
+#include "MachinePawn.h"
 #include "MachineGameState.generated.h"
 
 /**
@@ -14,7 +15,12 @@ class BILPAKK002_API AMachineGameState : public ABilpakkGameState
 {
 	GENERATED_BODY()
 
+
+	virtual void StartGame(FName Row) override;
+
+public:
 	
-	void StartGame(FName Row) override;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	AMachinePawn * MLPawn;
 	
 };
