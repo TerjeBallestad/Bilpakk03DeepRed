@@ -276,7 +276,7 @@ void UPackageGrid::SetStatus(FGridRange Range, EPackageType Status)
 	}
 }
 
-void UPackageGrid::CalculatePackageBounds(FTransform PackageTransform, FVector LocalBoundMin,FVector LocalBoundsMax, FGridRange& OutRange)
+void UPackageGrid::CalculatePackageBounds(const FTransform PackageTransform, FVector LocalBoundMin,FVector LocalBoundsMax, FGridRange& OutRange)
 {
 	FTransform ActivePackageTransform = PackageTransform;
 	ActivePackageTransform.SetLocation( SnapLocationToGrid(ActivePackageTransform.GetLocation()));
@@ -287,21 +287,21 @@ void UPackageGrid::CalculatePackageBounds(FTransform PackageTransform, FVector L
 
 	if (LocalBoundMin.X > LocalBoundsMax.X)
 	{
-		float Temp = LocalBoundMin.X;
+		const float Temp = LocalBoundMin.X;
 		LocalBoundMin.X = LocalBoundsMax.X;
 		LocalBoundsMax.X = Temp;
 	}
 
 	if (LocalBoundMin.Y > LocalBoundsMax.Y)
 	{
-		float Temp = LocalBoundMin.Y;
+		const float Temp = LocalBoundMin.Y;
 		LocalBoundMin.Y = LocalBoundsMax.Y;
 		LocalBoundsMax.Y = Temp;
 	}
 
 	if (LocalBoundMin.Z > LocalBoundsMax.Z)
 	{
-		float Temp = LocalBoundMin.Z;
+		const float Temp = LocalBoundMin.Z;
 		LocalBoundMin.Z = LocalBoundsMax.Z;
 		LocalBoundsMax.Z = Temp;
 	}

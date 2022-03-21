@@ -46,7 +46,7 @@ AStackablePackage* UPackagePool::GetPackage()
 void UPackagePool::ReturnAllPackages()
 {
 	TArray<AStackablePackage*> TempArray = ActivePackages;
-	for (auto Package : TempArray)
+	for (const auto Package : TempArray)
 	{
 		ReturnPackage(Package);
 	}
@@ -57,7 +57,7 @@ void UPackagePool::ReturnPackage(AStackablePackage* Package)
 	Package->SetActorHiddenInGame(true);
 	Package->SetActorEnableCollision(false);
 	ActivePackages.Remove(Package);
-	PackagePool.Add(Package);
+	PackagePool.Push(Package);
 }
 
 
