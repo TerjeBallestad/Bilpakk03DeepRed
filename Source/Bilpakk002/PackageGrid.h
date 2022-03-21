@@ -54,7 +54,8 @@ public:
 	FVector GridToWorldLocation(FIntVector GridLocation) const;
 
 	FIntVector RoundFVectorToIntVector(FVector Vector);
-	FVector SnapLocationToGrid(FVector WorldLocation);
+	FVector SnapLocationToGrid(FVector WorldLocation) const;
+	FIntVector SnapLocationToGrid(FIntVector GridLocation) const;
 	FIntVector CalculatePackageOffset(FGridRange Range);
 	bool CheckRangeVacant(FGridRange Range);
 	bool CheckRangeVacantOrColor(FGridRange Range, EPackageType Color);

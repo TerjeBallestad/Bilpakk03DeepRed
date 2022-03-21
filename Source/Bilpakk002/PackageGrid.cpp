@@ -96,14 +96,22 @@ bool UPackageGrid::FindAvailableGridPosition(FIntVector StartGridLocation, FIntV
 	return false;
 }
 
-FVector UPackageGrid::SnapLocationToGrid(FVector WorldLocation)
+FVector UPackageGrid::SnapLocationToGrid(FVector WorldLocation) const
 {
-	FVector LocalLocation = GridTransform.InverseTransformPosition(WorldLocation);
-	int NewX = FMath::Clamp(FGenericPlatformMath::RoundToInt(LocalLocation.X), 0, Size.X);
-	int NewY = FMath::Clamp(FGenericPlatformMath::RoundToInt(LocalLocation.Y), 0, Size.Y);
-	int NewZ = FMath::Clamp(FGenericPlatformMath::RoundToInt(LocalLocation.Z), 0, Size.Z);
+	const FVector LocalLocation = GridTransform.InverseTransformPosition(WorldLocation);
+	const int NewX = FMath::Clamp(FGenericPlatformMath::RoundToInt(LocalLocation.X), 0, Size.X);
+	const int NewY = FMath::Clamp(FGenericPlatformMath::RoundToInt(LocalLocation.Y), 0, Size.Y);
+	const int NewZ = FMath::Clamp(FGenericPlatformMath::RoundToInt(LocalLocation.Z), 0, Size.Z);
 	
 	return GridTransform.TransformPosition(FVector(NewX, NewY, NewZ));
+}
+
+FIntVector UPackageGrid::SnapLocationToGrid(FIntVector GridLocation) const
+{
+	const int NewX = FMath::Clamp(GridLocation.X, 0, Size.X);
+	const int NewY = FMath::Clamp(GridLocation.Y, 0, Size.Y);
+	const int NewZ = FMath::Clamp(GridLocation.Z, 0, Size.Z);
+	return FIntVector(NewX, NewY, NewZ);
 }
 
 FQuat UPackageGrid::SnapRotationToGrid(FRotator Rotator)

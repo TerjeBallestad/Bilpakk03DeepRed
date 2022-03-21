@@ -92,7 +92,7 @@ public:
 	bool PlacePackage(AStackablePackage* Package);
 	void StartUpdatingPreview(UMaterialInstance* Material, UStaticMesh* Mesh);
 	void StopUpdatingPreview();
-	bool UpdatePreview(AStackablePackage* Package, FTransform& InOutPreviewTransform);
+	bool UpdatePreview(const AStackablePackage* Package, FTransform& InOutPreviewTransform);
 	void MovePreviewBlock(FIntVector MovementDelta);
 	void RotatePreviewBlock(FRotator RotationDelta);
 	void PlaceActivePackage();

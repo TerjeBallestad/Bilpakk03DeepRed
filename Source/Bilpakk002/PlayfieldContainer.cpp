@@ -114,6 +114,7 @@ void APlayfieldContainer::Setup(FBilpakkLevel LevelData)
 	PointsCalculator->Setup(Colors, Grid, LevelData.Doors);
 	PackagePreviewGridPosition = FIntVector(4,4,4);
 	GetNewActivePackage();
+	//ActivePackage->MeshComponent->SetVisibility(false);
 /*	ActivePackage = GameState->PackageSpawner->GetNextPackage();
 	//ActivePackage->MeshComponent->SetVisibility(false);
 	const FVector PreviewLocation = Grid->GridToWorldLocation(PackagePreviewGridPosition);
@@ -158,31 +159,35 @@ void APlayfieldContainer::GetNewActivePackage()
 
 	if(!ActivePackageRotator)
 	{
-		ActivePackage->SetActorLocation(PreviewLocation);
 		ActivePackageRotator = GetWorld()->SpawnActor<AActor>();
 		UStaticMeshComponent *NewMesh = NewObject<UStaticMeshComponent>(ActivePackageRotator);
 		NewMesh->RegisterComponent();
 		NewMesh->SetMobility(EComponentMobility::Movable);
-		NewMesh->SetVisibility(false);
+		//NewMesh->SetVisibility(false);
 		ActivePackageRotator->SetRootComponent(NewMesh);
-	}
+		ActivePackageRotator->SetActorLocation(PreviewLocation);
+	} 
 
-	FVector Min, Max;
-	ActivePackage->MeshComponent->GetLocalBounds(Min, Max);
+	//FVector Min, Max;
+	//ActivePackage->MeshComponent->GetLocalBounds(Min, Max);
+	
 
-	const FVector Middle = (Max + Min) / 2 + PreviewLocation;
-	UE_LOG(LogTemp, Warning, TEXT("min: %s "), *((Max + Min) / 2).ToString());
-	DrawDebugBox(GetWorld(), PreviewLocation, FVector::OneVector, FColor::Cyan, true, 10,0,1);
-	ActivePackageRotator->SetActorLocation(Middle);
+	const FVector PackagePosition = PreviewLocation + (FVector( ActivePackage->PackageParameters.SizeInt ) - Grid->CellSize / 2);
+	//const FVector Middle = (Max + Min) / 2 - 2.5 + PreviewLocation;
+	ActivePackage->SetActorLocation(PackagePosition);
+	//UE_LOG(LogTemp, Warning, TEXT("min: %s "), *((Max + Min) / 2).ToString());
+	DrawDebugBox(GetWorld(), PreviewLocation, FVector::OneVector * 0.1, FColor::Cyan, true, 10,3,1);
+	DrawDebugBox(GetWorld(), PackagePosition, FVector::OneVector *0.1, FColor::Emerald, true, 10,2,1);
+	//ActivePackageRotator->SetActorLocation(Middle);
 	ActivePackage->AttachToActor(ActivePackageRotator, FAttachmentTransformRules::KeepWorldTransform);
-	ActivePackageRotator->SetActorLocation(PreviewLocation);
+	//ActivePackageRotator->SetActorLocation(PreviewLocation);
 	StartUpdatingPreview(ActivePackage->PackageParameters.Material, ActivePackage->MeshComponent->GetStaticMesh());
 	FTransform outTransform;
 	UpdatePreview(ActivePackage, outTransform);
 	
 }
 
-bool APlayfieldContainer::UpdatePreview(AStackablePackage* Package, FTransform &InOutPreviewTransform)
+bool APlayfieldContainer::UpdatePreview(const AStackablePackage* Package, FTransform& InOutPreviewTransform)
 {
 	DrawDebugCoordinateSystem(GetWorld(), ActivePackageRotator->GetActorLocation(), ActivePackageRotator->GetActorRotation(), 10, true, 10);
 	FVector Min;
@@ -204,18 +209,18 @@ bool APlayfieldContainer::UpdatePreview(AStackablePackage* Package, FTransform &
 
 void APlayfieldContainer::MovePreviewBlock(FIntVector MovementDelta)
 {
-	const FIntVector GridLocationToCheck = PackagePreviewGridPosition + MovementDelta;
+	const FIntVector GridLocationToCheck = Grid->SnapLocationToGrid( PackagePreviewGridPosition + MovementDelta);
 	FVector Min;
 	FVector Max;
 	FTransform FoundTransform;
 	ActivePackage->MeshComponent->GetLocalBounds(Min, Max);
-	const FVector Location = (Max + Min) / 2 + Grid->GridToWorldLocation(GridLocationToCheck);
-	ActivePackageRotator->SetActorLocation(Location);
+	//const FVector Location = (Max + Min) / 2 - 2.5 + Grid->GridToWorldLocation(GridLocationToCheck);
+	ActivePackageRotator->SetActorLocation(Grid->GridToWorldLocation(GridLocationToCheck));
 	Grid->CalculatePackageBounds(ActivePackage->GetTransform(), Min, Max, PreviewRange);
 	if (Grid->FindSpaceForPackage(ActivePackage->GetTransform(), PreviewRange,  FoundTransform))
 	{
-		DrawDebugCoordinateSystem(GetWorld(), FoundTransform.GetLocation(), ActivePackageRotator->GetActorRotation(), 10, true, 10);
-		PackagePreviewGridPosition = Grid->WorldToGridLocation(FoundTransform.GetLocation());
+		DrawDebugCoordinateSystem(GetWorld(), ActivePackage->GetActorLocation(), ActivePackageRotator->GetActorRotation(), 15, false, 10);
+		PackagePreviewGridPosition = GridLocationToCheck;
 		PreviewActor->SetActorTransform(FoundTransform);
 	}
 }
