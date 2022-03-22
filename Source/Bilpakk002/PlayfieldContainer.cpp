@@ -115,7 +115,7 @@ void APlayfieldContainer::Setup(FBilpakkLevel LevelData)
 	PointsCalculator->Setup(Colors, Grid, LevelData.Doors);
 	PackagePreviewGridPosition = FIntVector(4,4,4);
 	GetNewActivePackage();
-	//ActivePackage->MeshComponent->SetVisibility(false);
+	ActivePackage->MeshComponent->SetVisibility(false);
 /*	ActivePackage = GameState->PackageSpawner->GetNextPackage();
 	//ActivePackage->MeshComponent->SetVisibility(false);
 	const FVector PreviewLocation = Grid->GridToWorldLocation(PackagePreviewGridPosition);
@@ -154,7 +154,8 @@ void APlayfieldContainer::PanPlayfield()
 void APlayfieldContainer::GetNewActivePackage()
 {
 	ActivePackage = GameState->PackageSpawner->GetNextPackage();
-	UE_LOG(LogTemp, Warning, TEXT("New active package: %s"), * ActivePackage->GetName());
+	if(!ActivePackage) return;
+	//UE_LOG(LogTemp, Warning, TEXT("New active package: %s"), * ActivePackage->GetName());
 	const FVector ControllerLocation = Grid->GridToWorldLocation(PackagePreviewGridPosition);
 
 	if(!ActivePackageRotator)
@@ -213,6 +214,7 @@ bool APlayfieldContainer::UpdatePreview(const AStackablePackage* Package, FTrans
 
 void APlayfieldContainer::MovePreviewBlock(FIntVector MovementDelta)
 {
+	if(!ActivePackage) return;
 	FIntVector GridLocationToCheck = Grid->SnapLocationToGrid( PackagePreviewGridPosition + MovementDelta);
 	FVector Min;
 	FVector Max;
@@ -224,13 +226,15 @@ void APlayfieldContainer::MovePreviewBlock(FIntVector MovementDelta)
 	if (Grid->FindSpaceForPackage(ActivePackage->GetTransform(), PreviewRange,  FoundTransform))
 	{
 		DrawDebugCoordinateSystem(GetWorld(), Grid->GridToWorldLocation(GridLocationToCheck), ActivePackageRotator->GetActorRotation(), 15, false, 10);
-		//const FVector AMin = FVector(FVector(ActivePackage->PackageParameters.SizeInt * Grid->CellSize / 2).operator-());
-		//const FVector AMax(ActivePackage->PackageParameters.SizeInt * Grid->CellSize /2);
-		//FGridRange OutRange;
-		//Grid->CalculatePackageBounds(ActivePackageRotator->GetTransform(), AMin, AMax, OutRange);
-		//UE_LOG(LogTemp, Warning, TEXT("min: %s max: %s"), *OutRange.Min.ToString(), *OutRange.Max.ToString())
-		//PackagePreviewGridPosition = Grid->CalculatePackageOffset(OutRange);
-		PackagePreviewGridPosition = GridLocationToCheck;
+		FVector AMin = FVector(FVector(ActivePackage->PackageParameters.SizeInt * Grid->CellSize / 2).operator-());
+		FVector AMax(ActivePackage->PackageParameters.SizeInt * Grid->CellSize /2);
+		FGridRange OutRange;
+		Grid->CalculatePackageBounds(ActivePackageRotator->GetTransform(), AMin, AMax, OutRange);
+		UE_LOG(LogTemp, Warning, TEXT("min: %s max: %s"), *OutRange.Min.ToString(), *OutRange.Max.ToString())
+		FTransform ActivePackageTransform;
+		Grid->FindSpaceForPackage(ActivePackageRotator->GetTransform(), OutRange, ActivePackageTransform);
+		PackagePreviewGridPosition = Grid->WorldToGridLocation(ActivePackageTransform.GetLocation());
+		//PackagePreviewGridPosition = GridLocationToCheck;
 		PreviewActor->SetActorTransform(FoundTransform);
 	}
 }

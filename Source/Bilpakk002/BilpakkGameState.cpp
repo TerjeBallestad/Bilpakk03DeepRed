@@ -40,11 +40,15 @@ void ABilpakkGameState::FinishGame()
 	UBilpakkSave* Save = UBilpakkSave::Load();
 	Save->AddHighscore(ABilpakkGameState::GetPoints(GetWorld()), RowName);
 	Save->Save();
+	if(UIPawn)
+	{
 	UIPawn->SetActorTransform(StackingPawn->GetActorTransform());
 	UIPawn->SetActorHiddenInGame(false);
 	StackingPawn->SetActorHiddenInGame(true);
-	IsFinished = true;
 	PC->Possess(UIPawn);
+	}
+	
+	IsFinished = true;
 	AudioComponent->Stop();
 	OnFinishedGame.Broadcast();
 }
