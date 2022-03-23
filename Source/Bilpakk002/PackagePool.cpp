@@ -38,6 +38,7 @@ AStackablePackage* UPackagePool::GetPackage()
 	ActivePackages.Add(Package);
 	Package->bActive = true;
 	Package->SetActorHiddenInGame(false);
+	Package->MeshComponent->SetVisibility(true);
 	Package->SetActorEnableCollision(true);
 
 	return Package;

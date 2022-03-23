@@ -73,9 +73,10 @@ bool APlayfieldContainer::PlacePackage(AStackablePackage* Package)
 	OnPointsAdded.Broadcast();
 	UE_LOG(LogTemp, Warning, TEXT("Returned Points: %d, and %d negative points, %d bonus, %d diff, %d from gamestate"), Points.Total, Points.Negative, Points.Bonus, Points.Diff, ABilpakkGameState::GetPoints(GetWorld()));
 	PreviewMesh->SetVisibility(false);
-	ActivePackage->StopInteract();
+	Package->StopInteract();
 	GetNewActivePackage();
-	GameState->PackageSpawner->PackagePool->ReturnPackage(Package);
+	//Package->ReturnToPackagePool();
+	//GameState->PackageSpawner->PackagePool->ReturnPackage(Package);
 
 	return true;
 	//TODO Disable collision
@@ -114,6 +115,7 @@ void APlayfieldContainer::Setup(FBilpakkLevel LevelData)
 	Grid->Setup(LevelData.GridParameters, FTransform::Identity);
 	PointsCalculator->Setup(Colors, Grid, LevelData.Doors);
 	PackagePreviewGridPosition = FIntVector(4,4,4);
+	GameState->PackageSpawner->UpdateNextPackage();
 	GetNewActivePackage();
 	ActivePackage->MeshComponent->SetVisibility(false);
 /*	ActivePackage = GameState->PackageSpawner->GetNextPackage();
@@ -154,10 +156,10 @@ void APlayfieldContainer::PanPlayfield()
 void APlayfieldContainer::GetNewActivePackage()
 {
 	ActivePackage = GameState->PackageSpawner->GetNextPackage();
+	GameState->PackageSpawner->UpdateNextPackage();
 	if(!ActivePackage) return;
 	//UE_LOG(LogTemp, Warning, TEXT("New active package: %s"), * ActivePackage->GetName());
 	const FVector ControllerLocation = Grid->GridToWorldLocation(PackagePreviewGridPosition);
-
 	if(!ActivePackageRotator)
 	{
 		ActivePackageRotator = GetWorld()->SpawnActor<AActor>();
@@ -180,8 +182,9 @@ void APlayfieldContainer::GetNewActivePackage()
 	//+ (FVector( ActivePackage->PackageParameters.SizeInt ) * Grid->CellSize / 2 + Grid->CellSize / 2);
 	//const FVector Middle = (Max + Min) / 2 - 2.5 + PreviewLocation;
 	ActivePackage->AttachToActor(ActivePackageRotator, FAttachmentTransformRules::KeepRelativeTransform);
-	ActivePackage->SetActorLocation(PackagePosition);
+	ActivePackage->SetActorLocationAndRotation(PackagePosition, FRotator());
 	//UE_LOG(LogTemp, Warning, TEXT("min: %s "), *((Max + Min) / 2).ToString());
+	ActivePackage->SetActorHiddenInGame(true);
 	DrawDebugBox(GetWorld(), ControllerLocation, FVector::OneVector * 0.1, FColor::Cyan, true, 10,3,1);
 	DrawDebugBox(GetWorld(), PackagePosition, FVector::OneVector *0.1, FColor::Emerald, true, 10,2,1);
 	//ActivePackageRotator->SetActorLocation(Middle);
@@ -230,7 +233,6 @@ void APlayfieldContainer::MovePreviewBlock(FIntVector MovementDelta)
 		FVector AMax(ActivePackage->PackageParameters.SizeInt * Grid->CellSize /2);
 		FGridRange OutRange;
 		Grid->CalculatePackageBounds(ActivePackageRotator->GetTransform(), AMin, AMax, OutRange);
-		UE_LOG(LogTemp, Warning, TEXT("min: %s max: %s"), *OutRange.Min.ToString(), *OutRange.Max.ToString())
 		FTransform ActivePackageTransform;
 		Grid->FindSpaceForPackage(ActivePackageRotator->GetTransform(), OutRange, ActivePackageTransform);
 		PackagePreviewGridPosition = Grid->WorldToGridLocation(ActivePackageTransform.GetLocation());

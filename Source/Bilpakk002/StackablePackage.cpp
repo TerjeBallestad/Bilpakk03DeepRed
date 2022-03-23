@@ -44,7 +44,7 @@ void AStackablePackage::StartInteract(AHandController* HandController)
 	
 }
 
-void AStackablePackage::StopInteract()
+void AStackablePackage:: StopInteract()
 {
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 	if(PackagePool)

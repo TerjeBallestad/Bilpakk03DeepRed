@@ -42,10 +42,10 @@ void ABilpakkGameState::FinishGame()
 	Save->Save();
 	if(UIPawn)
 	{
-	UIPawn->SetActorTransform(StackingPawn->GetActorTransform());
-	UIPawn->SetActorHiddenInGame(false);
-	StackingPawn->SetActorHiddenInGame(true);
-	PC->Possess(UIPawn);
+		UIPawn->SetActorTransform(StackingPawn->GetActorTransform());
+		UIPawn->SetActorHiddenInGame(false);
+		StackingPawn->SetActorHiddenInGame(true);
+		PC->Possess(UIPawn);
 	}
 	
 	IsFinished = true;

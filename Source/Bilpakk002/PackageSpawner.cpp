@@ -4,6 +4,7 @@
 #include "PackageSpawner.h"
 
 #include "BilpakkGameState.h"
+#include "PlayfieldContainer.h"
 #include "Kismet/KismetArrayLibrary.h"
 #include "StackablePackage.h"
 
@@ -21,6 +22,7 @@ void APackageSpawner::Setup(FBilpakkLevel Data)
 	
 	TArray<EPackageType> Colors;
 	ColorLibrary.Colors.GetKeys(Colors);
+	PackageSpawnLocation.SetLocation(PackageSpawnLocation.GetLocation() + GetActorLocation());
 
 	if(Materials.Num() < 1)
 	{
@@ -69,27 +71,45 @@ int32 APackageSpawner::GetRemainingPackageAmount(UObject* WorldContextObject)
 		return -1;
 }
 
-AStackablePackage* APackageSpawner::GetNextPackage()
+void APackageSpawner::UpdateNextPackage()
 {
 	if(SpawnQueue.Num() < 1)
 	{
-		FTimerHandle Handle;
-		GetWorldTimerManager().SetTimer(Handle, GameState, &ABilpakkGameState::FinishGame, 2, false);
-		return nullptr;
+		NextPackage = nullptr;
+		return;
 	}
-	
+
 	AStackablePackage* Package = PackagePool->GetPackage();
 	Package->Setup(SpawnQueue[0]);
 	Package->MeshComponent->SetMaterial(0, SpawnQueue[0].Material);
-	return Package;
+	FVector NewSpawnLocation = PackageSpawnLocation.GetLocation();
+	NewSpawnLocation.X += Package->PackageParameters.SizeInt.X * 2.5 - 2.5;
+	NewSpawnLocation.Y += Package->PackageParameters.SizeInt.Y * 2.5 - 2.5;
+	NewSpawnLocation.Z -= Package->PackageParameters.SizeInt.Z * 2.5 - 2.5;
+	Package->SetActorLocationAndRotation(NewSpawnLocation, PackageSpawnLocation.GetRotation());
+	RemoveFirstPackageFromQueue();
+	NextPackage = Package;
 }
 
-void APackageSpawner::RemoveFirstPackageFromQueue()
+AStackablePackage* APackageSpawner::GetNextPackage()
+{
+	if(!NextPackage)
+	{
+		FTimerHandle Handle;
+		GetWorldTimerManager().SetTimer(Handle, GameState, &ABilpakkGameState::FinishGame, 2, false);
+	}
+	return NextPackage;
+}
+
+bool APackageSpawner::RemoveFirstPackageFromQueue()
 {
 	if(SpawnQueue.Num() > 0)
 	{
-		SpawnQueue.RemoveAt(0);
+		SpawnQueue.RemoveAt(0, 1, true);
+		//UE_LOG(LogTemp, Warning, TEXT("Count: %s"), SpawnQueue.Num());
+		return true;
 	}
+	return false;
 }
 
 void APackageSpawner::InitializeEvents_Implementation(ABilpakkGameState* State)

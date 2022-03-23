@@ -66,6 +66,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UPackagePool* PackagePool;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	AStackablePackage *NextPackage;
 	
 	UFUNCTION(BlueprintImplementableEvent)
 	void Finish();
@@ -78,20 +81,23 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
     void UnPause();
+
+	UFUNCTION(BlueprintCallable)
+	void UpdateNextPackage();
 	
 	UFUNCTION(BlueprintCallable)
 	class AStackablePackage* GetNextPackage();
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FTransform PackageSpawnLocation;
 	
 private:
 	
 	UPROPERTY(EditDefaultsOnly)
 	FTransform SpawnLocation;
 
-	UPROPERTY(EditDefaultsOnly)
-	FTransform PackageSpawnLocation;
-
 	UFUNCTION(BlueprintCallable)
-	void RemoveFirstPackageFromQueue();
+	bool RemoveFirstPackageFromQueue();
 
 	// Components
 	

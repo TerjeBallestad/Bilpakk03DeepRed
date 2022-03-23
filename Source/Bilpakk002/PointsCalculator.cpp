@@ -9,6 +9,7 @@
 #include "PackageGrid.h"
 #include "PackageSpawner.h"
 #include "Components/AudioComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 bool FPackageChunks::Contains(FIntVector Position)
 {
@@ -236,7 +237,7 @@ FPoints UPointsCalculator::CalculateEndGamePoints()
 		AudioComponent->SetSound(ErrorSound);
 		AudioComponent->Play();
 	}else {
-		if(APackageSpawner::GetRemainingPackageAmount(GetWorld()) <= 1)
+		if(!Cast<ABilpakkGameState>(UGameplayStatics::GetGameState(GetWorld()))->PackageSpawner->NextPackage)
 		{
 			// Final package placement
 			Cast<ABilpakkGameState>(GetWorld()->GetGameState())->AudioComponent->Stop();
