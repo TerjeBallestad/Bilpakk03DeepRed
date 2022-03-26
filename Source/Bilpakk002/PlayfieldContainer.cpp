@@ -218,7 +218,7 @@ bool APlayfieldContainer::UpdatePreview(const AStackablePackage* Package, FTrans
 void APlayfieldContainer::MovePreviewBlock(FIntVector MovementDelta)
 {
 	if(!ActivePackage) return;
-	FIntVector GridLocationToCheck = Grid->SnapLocationToGrid( PackagePreviewGridPosition + MovementDelta);
+	const FIntVector GridLocationToCheck = Grid->SnapLocationToGrid( PackagePreviewGridPosition + MovementDelta);
 	FVector Min;
 	FVector Max;
 	FTransform FoundTransform;
@@ -229,8 +229,8 @@ void APlayfieldContainer::MovePreviewBlock(FIntVector MovementDelta)
 	if (Grid->FindSpaceForPackage(ActivePackage->GetTransform(), PreviewRange,  FoundTransform))
 	{
 		//DrawDebugCoordinateSystem(GetWorld(), Grid->GridToWorldLocation(GridLocationToCheck), ActivePackageRotator->GetActorRotation(), 15, false, 10);
-		FVector AMin = FVector(FVector(ActivePackage->PackageParameters.SizeInt * Grid->CellSize / 2).operator-());
-		FVector AMax(ActivePackage->PackageParameters.SizeInt * Grid->CellSize /2);
+		const FVector AMin = FVector(FVector(ActivePackage->PackageParameters.SizeInt * Grid->CellSize / 2).operator-());
+		const FVector AMax(ActivePackage->PackageParameters.SizeInt * Grid->CellSize /2);
 		FGridRange OutRange;
 		Grid->CalculatePackageBounds(ActivePackageRotator->GetTransform(), AMin, AMax, OutRange);
 		FTransform ActivePackageTransform;

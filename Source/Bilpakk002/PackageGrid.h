@@ -53,10 +53,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FVector GridToWorldLocation(FIntVector GridLocation) const;
 
-	FIntVector RoundFVectorToIntVector(FVector Vector);
+	static FIntVector RoundFVectorToIntVector(FVector Vector);
 	FVector SnapLocationToGrid(FVector WorldLocation) const;
 	FIntVector SnapLocationToGrid(FIntVector GridLocation) const;
-	FIntVector CalculatePackageOffset(FGridRange Range);
+	FIntVector CalculatePackageOffset(FGridRange Range) const;
 	bool CheckRangeVacant(FGridRange Range);
 	bool CheckRangeVacantOrColor(FGridRange Range, EPackageType Color);
 	bool CheckCellVacantOrColor(FIntVector Position, EPackageType Color);

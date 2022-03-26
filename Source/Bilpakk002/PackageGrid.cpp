@@ -25,7 +25,7 @@ void UPackageGrid::TickComponent(float DeltaTime, ELevelTick TickType, FActorCom
 	}
 }	
 
-void UPackageGrid::Setup(FGridParameters Parameters, FTransform LocalOffset = FTransform::Identity)
+void UPackageGrid::Setup(FGridParameters Parameters, const FTransform LocalOffset = FTransform::Identity)
 {
 	Size.X = Parameters.Size.X;
 	Size.Y = Parameters.Size.Y;
@@ -52,7 +52,7 @@ void UPackageGrid::Setup(FGridParameters Parameters, FTransform LocalOffset = FT
 	}
 }
 
-bool UPackageGrid::FindSpaceForPackage(FTransform PackageTransform, FGridRange& OutRange, FTransform& OutTransform)
+bool UPackageGrid::FindSpaceForPackage(const FTransform PackageTransform, FGridRange& OutRange, FTransform& OutTransform)
 {
 	
 
@@ -75,14 +75,14 @@ bool UPackageGrid::FindSpaceForPackage(FTransform PackageTransform, FGridRange& 
 	return false;
 }
 
-bool UPackageGrid::FindAvailableGridPosition(FIntVector StartGridLocation, FIntVector& ResultPosition, FGridRange& OutRange)
+bool UPackageGrid::FindAvailableGridPosition(const FIntVector StartGridLocation, FIntVector& ResultPosition, FGridRange& OutRange)
 {
-	const FIntVector pSize = OutRange.Max - OutRange.Min;
+	const FIntVector PackageSize = OutRange.Max - OutRange.Min;
 	const int32 zSize = StartGridLocation.Z - OutRange.Min.Z;
-	for (int32 z = 0; z < Size.Z - pSize.Z + 1; ++z)
+	for (int32 z = 0; z < Size.Z - PackageSize.Z + 1; ++z)
 	{
 		OutRange.Min.Z = z;
-		OutRange.Max.Z = z + pSize.Z;
+		OutRange.Max.Z = z + PackageSize.Z;
 
 		if(!CheckRangeVacant(OutRange))
 		{
@@ -157,7 +157,7 @@ FVector UPackageGrid::GridToWorldLocation(const FIntVector GridLocation) const
 	return GridTransform.TransformPosition(FVector(GridLocation));
 }
 
-FIntVector UPackageGrid::RoundFVectorToIntVector(FVector Vector)
+FIntVector UPackageGrid::RoundFVectorToIntVector(const FVector Vector)
 {
 	FIntVector IntVector;
 	IntVector.X = FMath::CeilToInt(Vector.X);
@@ -166,7 +166,7 @@ FIntVector UPackageGrid::RoundFVectorToIntVector(FVector Vector)
 	return IntVector;
 }
 
-FIntVector UPackageGrid::CalculatePackageOffset(FGridRange Range)
+FIntVector UPackageGrid::CalculatePackageOffset(const FGridRange Range) const
 {
 	FIntVector Offset = FIntVector(0,0,0);
 

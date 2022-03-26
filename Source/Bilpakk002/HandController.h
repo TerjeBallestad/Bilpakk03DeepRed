@@ -62,8 +62,8 @@ public:
 	virtual void GripReleased() override;
 	//virtual void TriggerPressed() override;
 	//virtual void TriggerReleased() override;
-	class AStackablePackage* FindClosestPackageWithinRange();
-	void SetMapEnabled(bool Enabled);
+	class AStackablePackage* FindClosestPackageWithinRange() const;
+	void SetMapEnabled(bool Enabled) const;
 
 	UPROPERTY(BlueprintReadOnly)
 	bool bWantsToGrip = false;

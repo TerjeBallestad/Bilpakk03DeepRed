@@ -97,7 +97,7 @@ void AHandController::GripReleased()
 	PackageInGrip = nullptr;
 }
 
-AStackablePackage* AHandController::FindClosestPackageWithinRange()
+AStackablePackage* AHandController::FindClosestPackageWithinRange() const
 {
 	TArray<AActor*> Packages;
 	InteractionCollider->GetOverlappingActors(Packages, AStackablePackage::StaticClass());
@@ -115,7 +115,7 @@ AStackablePackage* AHandController::FindClosestPackageWithinRange()
 	return ClosestActor;
 }
 
-void AHandController::SetMapEnabled(bool Enabled)
+void AHandController::SetMapEnabled(const bool Enabled) const
 {
 	MapWidget->SetVisibility(Enabled);
 }
