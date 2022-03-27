@@ -45,6 +45,8 @@ private:
 	void RotateRight();
 	void FlipForward();
 	void FlipBackward();
+	void PanLeft();
+	void PanRight();
 
 	UPROPERTY()
 	ABilpakkGameState* GameState;

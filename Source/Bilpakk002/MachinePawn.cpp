@@ -51,6 +51,8 @@ void AMachinePawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	PlayerInputComponent->BindAction(TEXT("FlipForward"), IE_Pressed,this, &AMachinePawn::FlipForward);
 	PlayerInputComponent->BindAction(TEXT("FlipBackward"), IE_Pressed,this, &AMachinePawn::FlipBackward);
 	PlayerInputComponent->BindAction(TEXT("PlacePackage"), IE_Pressed,this, &AMachinePawn::PlacePackage);
+	PlayerInputComponent->BindAction(TEXT("PanLeft"), IE_Pressed,this, &AMachinePawn::PanLeft);
+	PlayerInputComponent->BindAction(TEXT("PanRight"), IE_Pressed,this, &AMachinePawn::PanRight);
 }
 
 void AMachinePawn::PlacePackage()
@@ -104,5 +106,15 @@ void AMachinePawn::FlipBackward()
 {
 	GameState->Playfield->RotatePreviewBlock(FRotator(0, 0, -90));
 	UE_LOG(LogTemp, Warning, TEXT("Flipping backward "))
+}
+
+void AMachinePawn::PanLeft()
+{
+	AddControllerYawInput(-180);
+}
+
+void AMachinePawn::PanRight()
+{
+	AddControllerYawInput(180);
 }
 
