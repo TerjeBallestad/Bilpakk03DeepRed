@@ -52,7 +52,7 @@ bool APlayfieldContainer::PlacePackage(AStackablePackage* Package)
 	NewPackage->SetMaterial(0,Package->PackageParameters.Material);
 	NewPackage->SetWorldLocationAndRotation(PreviewActor->GetActorLocation(), PreviewActor->GetActorRotation());
 	Grid->SetStatus(PreviewRange, Package->PackageParameters.Type);
-	int32 Bonus = PointsCalculator->CalculatePlacePackagePoints(PreviewRange, Package->PackageParameters.Type);
+	const int32 Bonus = PointsCalculator->CalculatePlacePackagePoints(PreviewRange, Package->PackageParameters.Type);
 	GameState->AddBonusPoints(Bonus);
 	Points = PointsCalculator->CalculateEndGamePoints();
 	Points.Diff += Bonus;
@@ -114,7 +114,7 @@ void APlayfieldContainer::Setup(FBilpakkLevel LevelData)
 	FColorLibrary().Colors.GetKeys(Colors); 
 	Grid->Setup(LevelData.GridParameters, FTransform::Identity);
 	PointsCalculator->Setup(Colors, Grid, LevelData.Doors);
-	PackagePreviewGridPosition = FIntVector(4,4,4);
+	PackagePreviewGridPosition = FIntVector(8,8,8);
 	GameState->PackageSpawner->UpdateNextPackage();
 	GetNewActivePackage();
 	ActivePackage->MeshComponent->SetVisibility(false);
@@ -171,6 +171,7 @@ void APlayfieldContainer::GetNewActivePackage()
 	} 
 
 	//FVector Min, Max;
+		ActivePackage->MeshComponent->SetMaterial(0, ActivePackage->RedHoloMaterial);
 	//ActivePackage->MeshComponent->GetLocalBounds(Min, Max);
 	
 	ActivePackageRotator->SetActorLocation(ControllerLocation);
@@ -204,13 +205,12 @@ bool APlayfieldContainer::UpdatePreview(const AStackablePackage* Package, FTrans
 	Grid->CalculatePackageBounds(Package->GetTransform(), Min, Max, PreviewRange);
 	if(Grid->FindSpaceForPackage(Package->GetTransform() , PreviewRange, InOutPreviewTransform))
 	{
-		//if(PreviewMovementThreshold < FVector::Distance(PreviewActor->GetActorLocation(), InOutPreviewTransform.GetLocation()))
-		//{
-			PreviewActor->SetActorTransform(InOutPreviewTransform);
-		//}
+		ActivePackage->SetActorHiddenInGame(true);
+		PreviewActor->SetActorTransform(InOutPreviewTransform);
 		PreviewMesh->SetVisibility(true);
 		return true;
 	} 
+	ActivePackage->SetActorHiddenInGame(false);
 	PreviewMesh->SetVisibility(false);
 	return false;
 }
@@ -218,16 +218,19 @@ bool APlayfieldContainer::UpdatePreview(const AStackablePackage* Package, FTrans
 void APlayfieldContainer::MovePreviewBlock(FIntVector MovementDelta)
 {
 	if(!ActivePackage) return;
+	
+	// UE_LOG(LogTemp, Warning, TEXT("Before snap %s"), *(PackagePreviewGridPosition + MovementDelta).ToString())
 	const FIntVector GridLocationToCheck = Grid->SnapLocationToGrid( PackagePreviewGridPosition + MovementDelta);
+	// UE_LOG(LogTemp, Warning, TEXT("After snap %s"), *GridLocationToCheck.ToString())
 	FVector Min;
 	FVector Max;
 	FTransform FoundTransform;
 	ActivePackage->MeshComponent->GetLocalBounds(Min, Max);
-	//const FVector Location = (Max + Min) / 2 - 2.5 + Grid->GridToWorldLocation(GridLocationToCheck);
 	ActivePackageRotator->SetActorLocation(Grid->GridToWorldLocation(GridLocationToCheck));
 	Grid->CalculatePackageBounds(ActivePackage->GetTransform(), Min, Max, PreviewRange);
 	if (Grid->FindSpaceForPackage(ActivePackage->GetTransform(), PreviewRange,  FoundTransform))
 	{
+		// Found a valid location
 		//DrawDebugCoordinateSystem(GetWorld(), Grid->GridToWorldLocation(GridLocationToCheck), ActivePackageRotator->GetActorRotation(), 15, false, 10);
 		const FVector AMin = FVector(FVector(ActivePackage->PackageParameters.SizeInt * Grid->CellSize / 2).operator-());
 		const FVector AMax(ActivePackage->PackageParameters.SizeInt * Grid->CellSize /2);
@@ -238,7 +241,16 @@ void APlayfieldContainer::MovePreviewBlock(FIntVector MovementDelta)
 		PackagePreviewGridPosition = Grid->WorldToGridLocation(ActivePackageTransform.GetLocation());
 		//PackagePreviewGridPosition = GridLocationToCheck;
 		PreviewActor->SetActorTransform(FoundTransform);
+		ActivePackage->SetActorHiddenInGame(true);
+		PreviewMesh->SetVisibility(true);
+		//UE_LOG(LogTemp, Warning, TEXT("Active Position %s"), *PackagePreviewGridPosition.ToString())
+		return;
 	}
+	// Did not find valid location
+	PackagePreviewGridPosition = GridLocationToCheck;
+	ActivePackage->SetActorHiddenInGame(false);
+	PreviewMesh->SetVisibility(false);
+	//UE_LOG(LogTemp, Warning, TEXT("Active Position %s"), *PackagePreviewGridPosition.ToString())
 }
 
 void APlayfieldContainer::RotatePreviewBlock(FRotator RotationDelta)
@@ -247,10 +259,14 @@ void APlayfieldContainer::RotatePreviewBlock(FRotator RotationDelta)
 	ActivePackageRotator->AddActorWorldRotation(RotationDelta);
 	FTransform outTransform;
 	UpdatePreview(ActivePackage, outTransform);
+	//UE_LOG(LogTemp, Warning, TEXT("Active Position %s"), *PackagePreviewGridPosition.ToString())
 }
 
 void APlayfieldContainer::PlaceActivePackage()
 {
-	PlacePackage(ActivePackage);	
+	if(!PlacePackage(ActivePackage))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Package not placed"));
+	}	
 }
 

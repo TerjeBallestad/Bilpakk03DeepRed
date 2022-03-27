@@ -86,12 +86,12 @@ public:
 	UFUNCTION(BlueprintCallable)
     void UpdateDebug();
 	
-    FQuat SnapRotationToGrid(FRotator Rotator);
-	FQuat SnapRotationToGridLocal(FRotator Rotator);
+    FQuat SnapRotationToGrid(FRotator Rotator) const;
+	FQuat SnapRotationToGridLocal(FRotator Rotator) const;
 	
 private:
 	static float SnapRotationAxis(float Degrees);
-	FQuat SnapRotation(FRotator Rotation);
+	static FQuat SnapRotation(FRotator Rotation);
 	bool FindAvailableGridPosition(FIntVector StartGridLocation, FIntVector& ResultPosition, FGridRange& OutRange);
 
 	UPROPERTY(VisibleAnywhere)

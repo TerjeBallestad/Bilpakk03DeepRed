@@ -96,39 +96,39 @@ bool UPackageGrid::FindAvailableGridPosition(const FIntVector StartGridLocation,
 	return false;
 }
 
-FVector UPackageGrid::SnapLocationToGrid(FVector WorldLocation) const
+FVector UPackageGrid::SnapLocationToGrid(const FVector WorldLocation) const
 {
 	const FVector LocalLocation = GridTransform.InverseTransformPosition(WorldLocation);
-	const int NewX = FMath::Clamp(FGenericPlatformMath::RoundToInt(LocalLocation.X), 0, Size.X);
-	const int NewY = FMath::Clamp(FGenericPlatformMath::RoundToInt(LocalLocation.Y), 0, Size.Y);
-	const int NewZ = FMath::Clamp(FGenericPlatformMath::RoundToInt(LocalLocation.Z), 0, Size.Z);
+	const int NewX = FMath::Clamp(FMath::RoundToInt(LocalLocation.X), 0, Size.X - 1);
+	const int NewY = FMath::Clamp(FMath::RoundToInt(LocalLocation.Y), 0, Size.Y - 1);
+	const int NewZ = FMath::Clamp(FMath::RoundToInt(LocalLocation.Z), 0, Size.Z - 1);
 	
 	return GridTransform.TransformPosition(FVector(NewX, NewY, NewZ));
 }
 
-FIntVector UPackageGrid::SnapLocationToGrid(FIntVector GridLocation) const
+FIntVector UPackageGrid::SnapLocationToGrid(const FIntVector GridLocation) const
 {
-	const int NewX = FMath::Clamp(GridLocation.X, 0, Size.X);
-	const int NewY = FMath::Clamp(GridLocation.Y, 0, Size.Y);
-	const int NewZ = FMath::Clamp(GridLocation.Z, 0, Size.Z);
+	const int NewX = FMath::Clamp(GridLocation.X, 0, Size.X - 1);
+	const int NewY = FMath::Clamp(GridLocation.Y, 0, Size.Y - 1);
+	const int NewZ = FMath::Clamp(GridLocation.Z, 0, Size.Z - 1);
 	return FIntVector(NewX, NewY, NewZ);
 }
 
-FQuat UPackageGrid::SnapRotationToGrid(FRotator Rotator)
+FQuat UPackageGrid::SnapRotationToGrid(const FRotator Rotator) const
 {
 	FQuat LocalRotation = GridTransform.InverseTransformRotation(Rotator.Quaternion());
 	LocalRotation = SnapRotation(LocalRotation.Rotator());
 	return GridTransform.TransformRotation(LocalRotation);
 }
 
-FQuat UPackageGrid::SnapRotationToGridLocal(FRotator Rotator)
+FQuat UPackageGrid::SnapRotationToGridLocal(const FRotator Rotator) const
 {
-	FQuat LocalRotation = GridTransform.InverseTransformRotation(Rotator.Quaternion());
+	const FQuat LocalRotation = GridTransform.InverseTransformRotation(Rotator.Quaternion());
 	return SnapRotation(LocalRotation.Rotator());
 }
 
 
-FQuat UPackageGrid::SnapRotation(FRotator Rotation)
+FQuat UPackageGrid::SnapRotation(const FRotator Rotation)
 {
 	const float Roll = SnapRotationAxis(Rotation.Roll);
 	const float Pitch = SnapRotationAxis(Rotation.Pitch);
