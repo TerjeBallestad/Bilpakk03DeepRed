@@ -17,6 +17,8 @@ enum class EPackageSize : uint8
     TwoTwoTwo			UMETA(DisplayName = "2x2x2"),
     TwoThreeThree		UMETA(DisplayName = "2x3x3"),
     ThreeFourTwo		UMETA(DisplayName = "3x4x2"),
+
+	Count
 };
 
 UENUM(BlueprintType)

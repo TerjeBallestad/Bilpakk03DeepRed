@@ -75,6 +75,9 @@ public:
 	bool FindSpaceForPackage(FTransform PackageTransform, UPARAM(ref) FGridRange& OutRange,UPARAM(ref) FTransform& OutTransform);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	int CellCount;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FIntVector Size;
 
 	UPROPERTY(VisibleAnywhere)

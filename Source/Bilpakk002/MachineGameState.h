@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "BilpakkGameState.h"
 #include "MachinePawn.h"
+#include "LevelGenerator.h"
 #include "MachineGameState.generated.h"
 
 /**
@@ -18,9 +19,15 @@ class BILPAKK002_API AMachineGameState : public ABilpakkGameState
 
 	virtual void StartGame(FName Row) override;
 
+	
+
 public:
+	AMachineGameState();
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	AMachinePawn * MLPawn;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	ULevelGenerator *LevelGenerator;
 	
 };

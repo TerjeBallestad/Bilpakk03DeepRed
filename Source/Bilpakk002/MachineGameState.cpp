@@ -40,7 +40,14 @@ void AMachineGameState::StartGame(FName Row)
 		MLPawn = Cast<AMachinePawn>(PC->GetPawn());
 	}
 
+	LevelGenerator->Setup(Playfield->GetPackageGrid());
+	LevelData = LevelGenerator->GenerateLevel();
 	//StackingPawn->SetupMap();
 	IsPaused = false;
 	OnNewGame.Broadcast();
+}
+
+AMachineGameState::AMachineGameState()
+{
+	LevelGenerator = CreateDefaultSubobject<ULevelGenerator>(TEXT("Level Generator"));
 }

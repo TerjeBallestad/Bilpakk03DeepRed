@@ -7,6 +7,7 @@
 
 
 #include "BilpakkGameState.h"
+#include "LevelGenerator.h"
 #include "MachineGameState.h"
 #include "PackageGrid.h"
 #include "PointsCalculator.h"
@@ -86,6 +87,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 	UPointsCalculator* PointsCalculator;
+
+	UPROPERTY(VisibleAnywhere)
+	ULevelGenerator *LevelGenerator;
 	
 public:	
 	//virtual void Tick(float DeltaTime) override;
@@ -96,6 +100,7 @@ public:
 	void MovePreviewBlock(FIntVector MovementDelta);
 	void RotatePreviewBlock(FRotator RotationDelta);
 	void PlaceActivePackage();
+	UPackageGrid* GetPackageGrid() const {return Grid;}
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	FPoints Points;

@@ -20,6 +20,7 @@ APlayfieldContainer::APlayfieldContainer()
 
 	Grid = CreateDefaultSubobject<UPackageGrid>(TEXT("Grid"));
 	PointsCalculator = CreateDefaultSubobject<UPointsCalculator>(TEXT("Points Calculator"));
+	LevelGenerator = CreateDefaultSubobject<ULevelGenerator>(TEXT("Level Generator"));
 	StaticMeshPool = CreateDefaultSubobject<UActorPool>(TEXT("StaticMeshPool"));
 	FloatingTextWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("FloatingTextWidget"));
 	FloatingTextWidget->SetupAttachment(CarModel);
@@ -113,6 +114,8 @@ void APlayfieldContainer::Setup(FBilpakkLevel LevelData)
 	LevelDataRowName = FName(LevelData.LevelName.ToString());
 	FColorLibrary().Colors.GetKeys(Colors); 
 	Grid->Setup(LevelData.GridParameters, FTransform::Identity);
+	//LevelGenerator->Setup(Grid);
+	//GameState->LevelData = LevelGenerator->GenerateLevel();
 	PointsCalculator->Setup(Colors, Grid, LevelData.Doors);
 	PackagePreviewGridPosition = FIntVector(8,8,8);
 	GameState->PackageSpawner->UpdateNextPackage();

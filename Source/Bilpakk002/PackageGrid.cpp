@@ -31,6 +31,7 @@ void UPackageGrid::Setup(FGridParameters Parameters, const FTransform LocalOffse
 	Size.Y = Parameters.Size.Y;
 	Size.Z = Parameters.Size.Z;
 	CellSize = Parameters.CellSize;
+	CellCount = 0;
 	
 	for (int x = 0; x < Size.X; ++x)
 	{
@@ -39,7 +40,8 @@ void UPackageGrid::Setup(FGridParameters Parameters, const FTransform LocalOffse
 			for (int z = 0; z < Size.Z; ++z)
 			{
 				FIntVector GridLocation = FIntVector(x, y, z);
-				Grid.Add(GridLocation, EPackageType::Vacant);				
+				Grid.Add(GridLocation, EPackageType::Vacant);
+				CellCount ++;
 			}
 		}
 	}
@@ -48,7 +50,10 @@ void UPackageGrid::Setup(FGridParameters Parameters, const FTransform LocalOffse
 	GridTransform.SetLocation(LocalOffset.GetLocation() + GetOwner()->GetActorTransform().TransformPosition(FVector(Size.X -1, Size.Y-1, Size.Z-1) * CellSize * -0.5));
 	for (FGridRange Range : Parameters.DefaultOccupiedGridPositions)
 	{
-		SetStatus(Range, EPackageType::Occupied);	
+		SetStatus(Range, EPackageType::Occupied);
+		int RangeAreaX = Range.Max.X - Range.Min.X;
+		int RangeAreaY = Range.Max.Y - Range.Min.Y;
+		CellCount -= RangeAreaX * RangeAreaY;
 	}
 }
 
@@ -260,7 +265,7 @@ bool UPackageGrid::CheckCellVacantOrColor(FIntVector Position, EPackageType Colo
 	return true;
 }
 
-void UPackageGrid::SetStatus(FGridRange Range, EPackageType Status)
+void UPackageGrid::SetStatus(const FGridRange Range, const EPackageType Status)
 {
 	for (int X = Range.Min.X; X < Range.Max.X; ++X)
 	{
