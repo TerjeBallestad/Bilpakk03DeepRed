@@ -147,13 +147,14 @@ void APlayfieldContainer::Setup(FBilpakkLevel LevelData)
 	UpdatePreview(ActivePackage, outTransform);*/
 }
 
-void APlayfieldContainer::PanPlayfield()
+void APlayfieldContainer::PanPlayfield(FRotator RotationDelta)
 {
-	const FVector CurrentLoc = PanHand->GetActorLocation();
-	float Degrees = FMath::Atan2(CurrentLoc.X, CurrentLoc.Y) - FMath::Atan2(InitialHandLocation.X, InitialHandLocation.Y); 
-	Degrees *=10;
-	const FRotator Delta = FRotator(0,Degrees,0);
-	CarModel->AddRelativeRotation(Delta);
+	// const FVector CurrentLoc = PanHand->GetActorLocation();
+	// float Degrees = FMath::Atan2(CurrentLoc.X, CurrentLoc.Y) - FMath::Atan2(InitialHandLocation.X, InitialHandLocation.Y); 
+	// Degrees *=10;
+	// const FRotator Delta = FRotator(0,Degrees,0);
+	CarModel->AddRelativeRotation(RotationDelta);
+	MovePreviewBlock(FIntVector::ZeroValue);
 }
 
 void APlayfieldContainer::GetNewActivePackage()

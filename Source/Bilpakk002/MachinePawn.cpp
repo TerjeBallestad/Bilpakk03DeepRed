@@ -110,11 +110,11 @@ void AMachinePawn::FlipBackward()
 
 void AMachinePawn::PanLeft()
 {
-	AddControllerYawInput(-180);
+	GameState->Playfield->PanPlayfield(FRotator(0,-90,0));
 }
 
 void AMachinePawn::PanRight()
 {
-	AddControllerYawInput(180);
+	GameState->Playfield->PanPlayfield(FRotator(0,90,0));
 }
 

@@ -30,7 +30,6 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-	void PanPlayfield();
 	void GetNewActivePackage();
 
 	UPROPERTY(EditDefaultsOnly)
@@ -101,6 +100,7 @@ public:
 	void RotatePreviewBlock(FRotator RotationDelta);
 	void PlaceActivePackage();
 	UPackageGrid* GetPackageGrid() const {return Grid;}
+	void PanPlayfield(FRotator RotationDelta);
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	FPoints Points;
