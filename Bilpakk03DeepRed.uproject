@@ -41,11 +41,16 @@
 		{
 			"Name": "NDIIOPlugin",
 			"Enabled": true
+		},
+		{
+			"Name": "PixelStreaming",
+			"Enabled": true
 		}
 	],
 	"TargetPlatforms": [
 		"PS4",
 		"WindowsNoEditor",
-		"Android"
+		"Android",
+		"Linux"
 	]
 }
