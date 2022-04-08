@@ -16,7 +16,7 @@
 	"Plugins": [
 		{
 			"Name": "Text3D",
-			"Enabled": true
+			"Enabled": false
 		},
 		{
 			"Name": "PythonScriptPlugin",
@@ -31,10 +31,6 @@
 			"Enabled": true
 		},
 		{
-			"Name": "MixedRealityCaptureFramework",
-			"Enabled": true
-		},
-		{
 			"Name": "OnlineFramework",
 			"Enabled": true
 		},
@@ -44,7 +40,49 @@
 		},
 		{
 			"Name": "PixelStreaming",
-			"Enabled": true
+			"Enabled": false
+		},
+		{
+			"Name": "SteamVR",
+			"Enabled": false,
+			"SupportedTargetPlatforms": [
+				"Win32",
+				"Win64",
+				"Linux"
+			]
+		},
+		{
+			"Name": "OpenXREyeTracker",
+			"Enabled": false,
+			"SupportedTargetPlatforms": [
+				"Win32",
+				"Win64",
+				"Linux",
+				"HoloLens",
+				"Android"
+			]
+		},
+		{
+			"Name": "OpenXRHandTracking",
+			"Enabled": false,
+			"SupportedTargetPlatforms": [
+				"Win32",
+				"Win64",
+				"Linux",
+				"HoloLens",
+				"Android"
+			]
+		},
+		{
+			"Name": "OpenXR",
+			"Enabled": false,
+			"SupportedTargetPlatforms": [
+				"Win32",
+				"Win64",
+				"Linux",
+				"Android",
+				"HoloLens"
+			]
 		}
 	],
 	"TargetPlatforms": [

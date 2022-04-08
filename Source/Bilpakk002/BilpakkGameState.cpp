@@ -7,7 +7,6 @@
 #include "BilpakkGameModeBase.h"
 #include "BilpakkSave.h"
 #include "PlayfieldContainer.h"
-#include "OculusMRFunctionLibrary.h"
 #include "Components/AudioComponent.h"
 
 void ABilpakkGameState::TogglePause()
@@ -100,9 +99,6 @@ void ABilpakkGameState::AddBonusPoints(int32 Amount)
 void ABilpakkGameState::BeginPlay()
 {
 	Super::BeginPlay();
-
-	UOculusMRFunctionLibrary::IsMrcEnabled();
-	
 	
 	AActor* MusicActor = GetWorld()->SpawnActor<AActor>();
 	AudioComponent = NewObject<UAudioComponent>(MusicActor);
