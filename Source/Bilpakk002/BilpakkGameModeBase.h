@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 
-#include "VRCarpakPawn.h"
 #include "GameFramework/GameModeBase.h"
 #include "BilpakkGameModeBase.generated.h"
 
@@ -23,7 +22,5 @@ public:
 
 	UPROPERTY(VisibleAnywhere)
 	FString RowName;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Classes)
-	TSubclassOf<AVRCarpakPawn> DefaultUIPawnClass;
+	
 };

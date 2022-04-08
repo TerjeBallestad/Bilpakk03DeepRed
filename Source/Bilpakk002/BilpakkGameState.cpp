@@ -7,31 +7,12 @@
 #include "BilpakkGameModeBase.h"
 #include "BilpakkSave.h"
 #include "PlayfieldContainer.h"
-#include "VRCarpakPawn.h"
 #include "OculusMRFunctionLibrary.h"
 #include "Components/AudioComponent.h"
 
 void ABilpakkGameState::TogglePause()
 {
-	if(IsFinished) return;
-	if(IsPaused)
-	{
-		// Unpause
-		UIPawn->SetActorHiddenInGame(true);
-		StackingPawn->SetActorHiddenInGame(false);
-		IsPaused = false;
-		PC->Possess(StackingPawn);
-		OnUnPausedGame.Broadcast();
-	} else
-	{
-		// Pause
-		UIPawn->SetActorTransform(StackingPawn->GetActorTransform());
-		UIPawn->SetActorHiddenInGame(false);
-		StackingPawn->SetActorHiddenInGame(true);
-		IsPaused = true;
-		PC->Possess(UIPawn);
-		OnPausedGame.Broadcast();
-	}
+
 }
 
 void ABilpakkGameState::FinishGame()
@@ -40,13 +21,7 @@ void ABilpakkGameState::FinishGame()
 	UBilpakkSave* Save = UBilpakkSave::Load();
 	Save->AddHighscore(ABilpakkGameState::GetPoints(GetWorld()), RowName);
 	Save->Save();
-	if(UIPawn)
-	{
-		UIPawn->SetActorTransform(StackingPawn->GetActorTransform());
-		UIPawn->SetActorHiddenInGame(false);
-		StackingPawn->SetActorHiddenInGame(true);
-		PC->Possess(UIPawn);
-	}
+
 	
 	IsFinished = true;
 	AudioComponent->Stop();
@@ -82,20 +57,8 @@ void ABilpakkGameState::StartGame(FName Row)
 		PC = GetWorld() != nullptr ? GetWorld()->GetFirstPlayerController<APlayerController>() : nullptr;
 		if(PC == nullptr) UE_LOG(LogTemp, Error, TEXT("Player controller is null --- Game State"))
 	}
-	if(!StackingPawn)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("No Stacking pawn"))
-		StackingPawn = Cast<AVRCarpakPawn>(PC->GetPawn());
-		StackingPawn->InitializeEvents(this);
-		StackingPawn->Setup();
-	}
-	if(!UIPawn)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("No UI pawn"))
-		UIPawn = GetWorld()->SpawnActor<AVRCarpakPawn>(UIPawnClass);
-		UIPawn->InitializeEvents(this);
-		UIPawn->Setup();
-	}
+
+
 	if(!PackageSpawner)
 	{
 		PackageSpawner = GetWorld()->SpawnActor<APackageSpawner>(PackageSpawnerClass);
@@ -107,11 +70,9 @@ void ABilpakkGameState::StartGame(FName Row)
 		//Playfield->InitializeEvents(this);
 	}
 	
-	UIPawn->SetActorHiddenInGame(true);
-	StackingPawn->SetActorHiddenInGame(false);
-	StackingPawn->SetupMap();
+
 	IsPaused = false;
-	PC->Possess(StackingPawn);
+
 	OnNewGame.Broadcast();
 	if(bFirstTime)
 	{

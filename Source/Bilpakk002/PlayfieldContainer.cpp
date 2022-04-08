@@ -8,7 +8,6 @@
 #include "DrawDebugHelpers.h"
 #include "PackageSpawner.h"
 #include "StackablePackage.h"
-#include "VRCarpakPawn.h"
 #include "Kismet/KismetMathLibrary.h"
 
 APlayfieldContainer::APlayfieldContainer()

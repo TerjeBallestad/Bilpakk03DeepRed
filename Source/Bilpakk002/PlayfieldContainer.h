@@ -11,6 +11,7 @@
 #include "MachineGameState.h"
 #include "PackageGrid.h"
 #include "PointsCalculator.h"
+#include "Components/WidgetComponent.h"
 
 
 #include "PlayfieldContainer.generated.h"

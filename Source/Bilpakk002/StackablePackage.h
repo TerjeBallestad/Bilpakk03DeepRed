@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "HandController.h"
 #include "PackagePool.h"
 #include "GameFramework/Actor.h"
 #include "StackablePackage.generated.h"
@@ -137,7 +136,6 @@ public:
 	void Setup(FPackageParameters NewPackage);
 	
 	void StopInteract();
-	void StartInteract(AHandController* HandController);
 
 
 	 //void StopInteract_Implementation(AHandController* HandController) ;

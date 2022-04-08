@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 
+#include "Sound/SoundCue.h"
 #include "PackageSpawner.h"
 #include "GameFramework/GameStateBase.h"
 #include "BilpakkGameState.generated.h"
@@ -75,13 +76,7 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	FBilpakkLevel LevelData;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	class AVRCarpakPawn* UIPawn;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<AVRCarpakPawn> UIPawnClass;
-
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class APackageSpawner *PackageSpawner;
 
@@ -94,9 +89,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<APlayfieldContainer> PlayfieldClass;
 		
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class AVRCarpakPawn* StackingPawn;
-	
 protected:
 	bool bFirstTime = true;
 	int32 Points;

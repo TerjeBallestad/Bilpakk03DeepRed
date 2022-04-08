@@ -40,7 +40,7 @@
 		},
 		{
 			"Name": "NDIIOPlugin",
-			"Enabled": true
+			"Enabled": false
 		},
 		{
 			"Name": "PixelStreaming",

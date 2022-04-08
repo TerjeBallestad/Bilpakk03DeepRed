@@ -7,6 +7,7 @@
 #include "ActorPool.h"
 #include "PackageGrid.h"
 #include "Components/ActorComponent.h"
+#include "Sound/SoundCue.h"
 #include "PointsCalculator.generated.h"
 
 FORCEINLINE    bool operator==(const FGridRange &Lhs, const FGridRange& Rhs)
