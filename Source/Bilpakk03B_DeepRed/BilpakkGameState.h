@@ -13,7 +13,7 @@
  * 
  */
 UCLASS()
-class BILPAKK002_API ABilpakkGameState : public AGameStateBase
+class BILPAKK03B_DEEPRED_API ABilpakkGameState : public AGameStateBase
 {
 	GENERATED_BODY()
 

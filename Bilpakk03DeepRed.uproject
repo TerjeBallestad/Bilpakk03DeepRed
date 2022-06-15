@@ -5,7 +5,7 @@
 	"Description": "",
 	"Modules": [
 		{
-			"Name": "Bilpakk002",
+			"Name": "Bilpakk03B_DeepRed",
 			"Type": "Runtime",
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
@@ -89,6 +89,8 @@
 		"PS4",
 		"WindowsNoEditor",
 		"Android",
-		"Linux"
+		"Linux",
+		"LinuxAArch64NoEditor",
+		"LinuxNoEditor"
 	]
 }

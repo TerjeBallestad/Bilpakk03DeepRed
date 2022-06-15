@@ -39,7 +39,7 @@ struct FGridParameters
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class BILPAKK002_API UPackageGrid : public UActorComponent
+class BILPAKK03B_DEEPRED_API UPackageGrid : public UActorComponent
 {
 	GENERATED_BODY()
 

@@ -10,7 +10,7 @@
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class BILPAKK002_API ULevelGenerator : public UActorComponent
+class BILPAKK03B_DEEPRED_API ULevelGenerator : public UActorComponent
 {
 	GENERATED_BODY()
 

@@ -10,7 +10,7 @@
 #include "MachinePawn.generated.h"
 
 UCLASS()
-class BILPAKK002_API AMachinePawn : public APawn
+class BILPAKK03B_DEEPRED_API AMachinePawn : public APawn
 {
 	GENERATED_BODY()
 

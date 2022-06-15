@@ -18,7 +18,7 @@
 
 
 UCLASS()
-class BILPAKK002_API APlayfieldContainer : public AActor
+class BILPAKK03B_DEEPRED_API APlayfieldContainer : public AActor
 {
 	GENERATED_BODY()
 	

@@ -8,7 +8,7 @@
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class BILPAKK002_API UActorPool : public UActorComponent
+class BILPAKK03B_DEEPRED_API UActorPool : public UActorComponent
 {
 	GENERATED_BODY()
 

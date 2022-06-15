@@ -71,7 +71,7 @@ bool APlayfieldContainer::PlacePackage(AStackablePackage* Package)
 	FloatingTextWidget->SetWorldRotation(WidgetRotation);
 	NegativeFloatingTextWidget->SetWorldRotation(WidgetRotation);
 	OnPointsAdded.Broadcast();
-	UE_LOG(LogTemp, Warning, TEXT("Returned Points: %d, and %d negative points, %d bonus, %d diff, %d from gamestate"), Points.Total, Points.Negative, Points.Bonus, Points.Diff, ABilpakkGameState::GetPoints(GetWorld()));
+	UE_LOG(LogTemp, Warning, TEXT("%d base score + %d negative points + %d bonus points.  CURRENT SCORE ----> %d"), Points.Diff - Bonus, Points.Negative, Points.Bonus,  ABilpakkGameState::GetPoints(GetWorld()));
 	PreviewMesh->SetVisibility(false);
 	Package->StopInteract();
 	GetNewActivePackage();

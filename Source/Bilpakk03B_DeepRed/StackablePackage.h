@@ -98,7 +98,7 @@ struct FPackageParameters
 };
 
 UCLASS()
-class BILPAKK002_API AStackablePackage : public AActor
+class BILPAKK03B_DEEPRED_API AStackablePackage : public AActor
 {
 	GENERATED_BODY()
 	

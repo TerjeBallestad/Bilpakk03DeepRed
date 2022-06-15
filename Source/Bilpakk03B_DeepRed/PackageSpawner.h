@@ -42,7 +42,7 @@ struct FBilpakkLevel: public FTableRowBase
 	
 };
 UCLASS()
-class BILPAKK002_API APackageSpawner : public AActor
+class BILPAKK03B_DEEPRED_API APackageSpawner : public AActor
 {
 	GENERATED_BODY()
 	

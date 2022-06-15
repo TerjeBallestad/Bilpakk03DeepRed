@@ -25,7 +25,7 @@ struct FHighscore
  * 
  */
 UCLASS()
-class BILPAKK002_API UBilpakkSave : public USaveGame
+class BILPAKK03B_DEEPRED_API UBilpakkSave : public USaveGame
 {
 	GENERATED_BODY()
 

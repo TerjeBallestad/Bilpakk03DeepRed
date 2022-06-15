@@ -45,7 +45,7 @@ struct FPoints
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class BILPAKK002_API UPointsCalculator : public UActorComponent
+class BILPAKK03B_DEEPRED_API UPointsCalculator : public UActorComponent
 {
 	GENERATED_BODY()
 
@@ -79,8 +79,8 @@ private:
 	UActorPool* MeshPool;
 
 	UFUNCTION()
-	void SetMeshPoolInvisible();
-	int32 CalculatePackagePoints(FIntVector PackageSize);
+	void SetMeshPoolInvisible() const;
+	static int32 CalculatePackagePoints(FIntVector PackageSize);
 
 	UPROPERTY()
 	int32 PreviousPoints = 0;

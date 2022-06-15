@@ -13,7 +13,7 @@
  * 
  */
 UCLASS()
-class BILPAKK002_API URouteMap : public UUserWidget
+class BILPAKK03B_DEEPRED_API URouteMap : public UUserWidget
 {
 	GENERATED_BODY()
 

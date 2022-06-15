@@ -11,7 +11,7 @@
  * 
  */
 UCLASS()
-class BILPAKK002_API ABilpakkGameModeBase : public AGameModeBase
+class BILPAKK03B_DEEPRED_API ABilpakkGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 	

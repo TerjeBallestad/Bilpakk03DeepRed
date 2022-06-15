@@ -11,7 +11,7 @@ UDELEGATE()
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FComponentCustomStartSignature);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class BILPAKK002_API UPackagePool : public UActorComponent
+class BILPAKK03B_DEEPRED_API UPackagePool : public UActorComponent
 {
 	GENERATED_BODY()
 	

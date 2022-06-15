@@ -68,7 +68,7 @@ void UPointsCalculator::SpawnNegativeIndicator(FGridRange Package)
 	
 }
 
-void UPointsCalculator::SetMeshPoolInvisible()
+void UPointsCalculator::SetMeshPoolInvisible() const
 {
 	MeshPool->ClearStackedPackages();
 }
