@@ -8,6 +8,7 @@
 #include "BilpakkSave.h"
 #include "PlayfieldContainer.h"
 #include "Components/AudioComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 void ABilpakkGameState::TogglePause()
 {
@@ -25,6 +26,8 @@ void ABilpakkGameState::FinishGame()
 	IsFinished = true;
 	AudioComponent->Stop();
 	OnFinishedGame.Broadcast();
+	StartGame("");
+	//UKismetSystemLibrary::QuitGame(GetWorld(), PC, EQuitPreference::Quit, true);
 }
 
 void ABilpakkGameState::PlayMusic()

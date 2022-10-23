@@ -66,7 +66,7 @@ FBilpakkLevel ULevelGenerator::GenerateLevel()
 	}
 	
 		UE_LOG(LogTemp, Warning, TEXT("Remaining cells %d"), RemainingCells)
-	while (RemainingCells > 100)
+	while (RemainingCells > 2000)
 	{
 		FPackageParameters NewPackage = FPackageParameters();
 		NewPackage.Type = RandomPackageType();
